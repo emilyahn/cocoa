@@ -18,9 +18,9 @@
     },
 
     "connection_timeout_num_seconds": 3,
-    "templates_dir": "/home/hehe/game-dialogue/src/web/templates",
+    "templates_dir": "src/web/templates",
     "end_survey": 1,
-    "instructions": "/home/hehe/game-dialogue/data/web/mutual-friends-instructions.html",
+    "instructions": "data/web/mutual-friends-instructions.html",
     "task_title": "Who's Our Mutual Friend?",
     "icon": "handshake.jpg",
     "models": {

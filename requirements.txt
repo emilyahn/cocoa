@@ -1,0 +1,7 @@
+fuzzywuzzy
+editdistance
+flask
+gevent
+sqlite3
+lxml
+requests
