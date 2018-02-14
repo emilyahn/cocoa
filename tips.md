@@ -9,7 +9,7 @@ import ipdb; ipdb.set_trace()
 python src/web/dump_db_neg.py --db web_output/2018-01-16/chat_state.db --output web_output/log1_01-16_chats.json --surveys web_output/log1_01-16_surv.json --schema-path data/schema.json --scenarios-path data/scenarios.json
 
 ### command to run app
-python src/web/start_app.py --port 5000 --schema-path data/friends-schema.json --scenarios-path data/scenarios.json --config data/web/app_params.json
+PYTHONPATH=. python src/web/start_app.py --port 5000 --schema-path data/friends-schema.json --scenarios-path data/scenarios.json --config data/web/app_params.json
 
 ### mt stuff
 Downloaded the following with brew:
@@ -18,3 +18,14 @@ Downloaded the following with brew:
 * boost
 * xmlrpc-c
 * boost-build
+
+### train DynoNet
+PYTHONPATH=. python src/main.py --schema-path data/schema.json --scenarios-path data/scenarios.json
+--train-examples-paths data/train.json --test-examples-paths data/dev.json --stop-words data/common_words.txt
+--min-epochs 10 --checkpoint checkpoint --rnn-type lstm --learning-rate 0.5 --optimizer adagrad
+--print-every 50 --model attn-copy-encdec --gpu 1 --rnn-size 100 --grad-clip 0 --num-items 12
+--batch-size 32 --stats-file stats.json --entity-encoding-form type --entity-decoding-form type
+--node-embed-in-rnn-inputs --msg-aggregation max --word-embed-size 100 --node-embed-size 50
+--entity-hist-len -1 --learned-utterance-decay
+
+

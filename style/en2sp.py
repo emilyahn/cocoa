@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# from polyglot.text import Text
 import spacy
 from nltk.tokenize import wordpunct_tokenize
 
@@ -12,16 +11,21 @@ nlp_en = spacy.load('en')
 nlp_sp = spacy.load('es')
 
 def read_tables():
-	with open("data/chat_prev/en_rule.txt") as f:
-		en_orig = [line.replace('\n','') for line in f.readlines()]
-	with open("data/chat_prev/sp_rule.txt") as f:
-		sp_orig = [line.replace('\n','') for line in f.readlines()]
+	# with open("data/chat_prev/en_rule.txt") as f:
+	# 	en_orig = [line.replace('\n','') for line in f.readlines()]
+	# with open("data/chat_prev/sp_rule.txt") as f:
+	# 	sp_orig = [line.replace('\n','') for line in f.readlines()]
+
+	with open("data/chat_prev/en-sp_rule.txt") as f:
+		en_orig = [line.split(' ||| ')[0] for line in f.readlines()]
+		sp_orig = [line.split(' ||| ')[1].replace('\n','') for line in f.readlines()]
+
 	return dict([('en', en_orig), ('sp', sp_orig)])
 
 tables_dct = read_tables()
 # idx&txt params are redundant but to-be-modified later
 def sp_matrix_eng_nouns(en_txt, idx): #tables_dct, 
-	""" eng_txt: string of words (not list)
+	""" en_txt: string of words (not list)
 		tables_dct: contains 2 tables, keys = en,sp
 		idx: int of which index in table is this sentence
 		[return] string of words (list separated by space)
@@ -51,6 +55,25 @@ def sp_matrix_eng_nouns(en_txt, idx): #tables_dct,
 			cm_txt[orig_i] = en_nouns[-1]
 	return " ".join(cm_txt)
 
+def print_lex():
+	print "STYLE 1: LEXICAL on Rule-based Bot // 6 Feb 2018"
+	print "KEY:\n1. Spanish (orig)\n2. English (orig)\n3. CodeMix"
+	print "*"*10
+
+	for i, en_sent in enumerate(tables_dct['en']):
+		print tables_dct['sp'][i]
+		print en_sent
+		print sp_matrix_eng_nouns(en_sent, i).encode('utf-8') # encoding req'd to save print logs
+		print "*"*10
+		# if i==10: break
+
+def create_synt_cm(en_txt, idx):
+	en_doc = nlp_en(unicode(en_txt, "utf-8"))
+	sp_txt = tables_dct['sp'][idx]
+	sp_doc = nlp_sp(unicode(sp_txt, "utf-8"))
+
+
+
 # TEST/PLAY AROUND
 
 # sent_sp = "Tengo dos amigos que estudiaron estudios islámicos."
@@ -59,16 +82,20 @@ def sp_matrix_eng_nouns(en_txt, idx): #tables_dct,
 # test_dct = dict([('en', [sent_en]), ('sp', [sent_sp])])
 # print sp_matrix_eng_nouns(sent_en, test_dct, 0)
 
-print "STYLE 1: LEXICAL on Rule-based Bot // 6 Feb 2018"
-print "KEY:\n1. Spanish (orig)\n2. English (orig)\n3. CodeMix"
-print "*"*10
+# print_lex()
 
-for i, en_sent in enumerate(tables_dct['en']):
-	print tables_dct['sp'][i]
-	print en_sent
-	print sp_matrix_eng_nouns(en_sent, i).encode('utf-8')
+for i, en_txt in enumerate(tables_dct['en'][:50]):
+	sp_txt = tables_dct['sp'][i]
+	en_doc = nlp_en(unicode(en_txt, "utf-8"))
+	sp_doc = nlp_sp(unicode(sp_txt, "utf-8"))
+	print en_txt
+	print [en_token.pos_ for en_token in en_doc]
+	print sp_txt
+	print [sp_token.pos_ for sp_token in sp_doc]
 	print "*"*10
-	# if i==10: break
+
+
+
 
 
 
