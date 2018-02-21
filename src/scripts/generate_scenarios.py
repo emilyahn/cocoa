@@ -29,7 +29,7 @@ def add_randomization_arguments(parser):
     parser.add_argument('--min-items', type=int, default=5,
                         help='Minimum number of items per scenario')
     parser.add_argument('--max-items', type=int, default=12,
-                        help='Minimum number of items per scenario')
+                        help='Maximum number of items per scenario')
 
     parser.add_argument('--alphas', nargs='*', type=float, default=[0.3, 1.0, 3.0],
                         help='Alpha values to select from for each attribute.')

@@ -28,4 +28,17 @@ PYTHONPATH=. python src/main.py --schema-path data/schema.json --scenarios-path 
 --node-embed-in-rnn-inputs --msg-aggregation max --word-embed-size 100 --node-embed-size 50
 --entity-hist-len -1 --learned-utterance-decay
 
+### alignment
+Commands from Yulia's train-cdec (script)[https://github.com/ytsvetko/mt_scripts/blob/master/train_mt/train-cdec.sh]
+```sh
+if (( ${DO_ALIGN} )); then
+  # Run bidirectional word alignments using fast_align. 
+  mkdir -p ${SYSTEM_DIR}/data.aligned
+  ${CDEC}/word-aligner/fast_align -i ${CORPUS_DIR}/${TRAIN}.filtered -d -v -o -p ${SYSTEM_DIR}/data.aligned/${TRAIN}.aligned.fwd.probs > ${SYSTEM_DIR}/data.aligned/${TRAIN}.aligned.fwd
+  ${CDEC}/word-aligner/fast_align -i ${CORPUS_DIR}/${TRAIN}.filtered -d -v -o -r -p ${SYSTEM_DIR}/data.aligned/${TRAIN}.aligned.rev.probs > ${SYSTEM_DIR}/data.aligned/${TRAIN}.aligned.rev
+  ${CDEC}/utils/atools -i ${SYSTEM_DIR}/data.aligned/${TRAIN}.aligned.fwd -j ${SYSTEM_DIR}/data.aligned/${TRAIN}.aligned.rev -c grow-diag-final-and > ${SYSTEM_DIR}/data.aligned/${TRAIN}.aligned.gdfa
 
+  # To visualize alignments
+  ${CDEC}/utils/atools -i ${SYSTEM_DIR}/data.aligned/${TRAIN}.aligned.gdfa -c display > ${SYSTEM_DIR}/data.aligned/${TRAIN}.aligned.gdfa.display
+fi
+```

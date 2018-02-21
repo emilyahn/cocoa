@@ -5,3 +5,4 @@ gevent
 lxml
 requests
 flask_socketio
+python-levenshtein

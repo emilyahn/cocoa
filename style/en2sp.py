@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import random
 import spacy
 from nltk.tokenize import wordpunct_tokenize
 
@@ -10,19 +11,24 @@ __author__ = 'eahn1'
 nlp_en = spacy.load('en')
 nlp_sp = spacy.load('es')
 
-def read_tables():
+def read_tables(fname):
 	# with open("data/chat_prev/en_rule.txt") as f:
 	# 	en_orig = [line.replace('\n','') for line in f.readlines()]
 	# with open("data/chat_prev/sp_rule.txt") as f:
 	# 	sp_orig = [line.replace('\n','') for line in f.readlines()]
 
-	with open("data/chat_prev/en-sp_rule.txt") as f:
+	with open(fname) as f:
 		en_orig = [line.split(' ||| ')[0] for line in f.readlines()]
 		sp_orig = [line.split(' ||| ')[1].replace('\n','') for line in f.readlines()]
 
 	return dict([('en', en_orig), ('sp', sp_orig)])
 
-tables_dct = read_tables()
+tables_dct = read_tables("style/en-sp_rule.txt")
+
+def read_fastalign(align_fname):
+	with open(align_fname) as f:
+		pass
+
 # idx&txt params are redundant but to-be-modified later
 def sp_matrix_eng_nouns(en_txt, idx): #tables_dct, 
 	""" en_txt: string of words (not list)
@@ -67,24 +73,39 @@ def print_lex():
 		print "*"*10
 		# if i==10: break
 
-def create_synt_cm(en_txt, idx):
+def create_synt_cm(en_txt, sp_txt, start_en_bool):
+	
+	# en_txt = tables_dct['en'][idx]
 	en_doc = nlp_en(unicode(en_txt, "utf-8"))
-	sp_txt = tables_dct['sp'][idx]
+	# sp_txt = tables_dct['sp'][idx]
 	sp_doc = nlp_sp(unicode(sp_txt, "utf-8"))
+
+	if start_en_bool:
+		pass
+
+	# TO BE CONTINUED
 
 
 
 # TEST/PLAY AROUND
 
-# sent_sp = "Tengo dos amigos que estudiaron estudios islámicos."
-# sent_en = "I have two friends who studied islamic studies."
+
+
+sent_sp = "Tengo dos amigos que estudiaron estudios islámicos."
+sent_en = "I have two friends who studied islamic studies."
+
+start_en_bool = random.choice([True, False])
+create_synt_cm(sent_en, sent_sp, start_en_bool)
 
 # test_dct = dict([('en', [sent_en]), ('sp', [sent_sp])])
 # print sp_matrix_eng_nouns(sent_en, test_dct, 0)
 
 # print_lex()
 
-for i, en_txt in enumerate(tables_dct['en'][:50]):
+# visualize POS for first n examples
+'''
+n = 50
+for i, en_txt in enumerate(tables_dct['en'][:n]):
 	sp_txt = tables_dct['sp'][i]
 	en_doc = nlp_en(unicode(en_txt, "utf-8"))
 	sp_doc = nlp_sp(unicode(sp_txt, "utf-8"))
@@ -93,7 +114,7 @@ for i, en_txt in enumerate(tables_dct['en'][:50]):
 	print sp_txt
 	print [sp_token.pos_ for sp_token in sp_doc]
 	print "*"*10
-
+'''
 
 
 

@@ -20,8 +20,7 @@ class SimpleSession(Session):
     - selects and item
     '''
 
-    # greetings = ['hi', 'hello', 'hey', 'hiya']
-    greetings = ['hola', 'wassup', 'yo']
+    greetings = ['hi', 'hello', 'hey', 'hiya']
 
     def __init__(self, agent, kb, lexicon, realizer=None, consecutive_entity=True):
         super(SimpleSession, self).__init__(agent)
@@ -33,13 +32,6 @@ class SimpleSession(Session):
         self.consecutive_entity = consecutive_entity
         self.num_items = len(kb.items)
         self.entity_coords = self.get_entity_coords()
-        # print "ENTITY_COORDS", self.entity_coords
-        print '*'*20
-        print type(kb.items)
-        print len(kb.items)
-        print kb.items
-        print '*'*20
-
         self.entity_weights = self.weight_entity()
         self.item_weights = [1.] * self.num_items
 
@@ -162,8 +154,7 @@ class SimpleSession(Session):
                     elif entity_type == 'major':
                         p = 'who studied'
                     else:
-                        # modified singular surface form of like --> 'likes'
-                        p = random.choice(['who like' if count > 1 else 'who likes', 'into'])
+                        p = random.choice(['who like' if count > 1 else 'who like', 'into'])
                     new_str.append(p + ' ' + s)
                 entities_str = new_str
             conj = '%s' % ('friends' if count > 1 else 'friend') if prefix else ''
