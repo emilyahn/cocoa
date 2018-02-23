@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import random
 import re
 from collections import defaultdict
@@ -16,12 +17,13 @@ class SimpleSession(Session):
     The simple system implements a bot that
     - greets
     - asks or informs about a fact in its KB
-    - replies 'no' or 'yes' to partner's repsonse
+    - replies 'no' or 'yes' to partner's response
     - selects and item
     '''
 
     # greetings = ['hi', 'hello', 'hey', 'hiya']
-    greetings = ['hola', 'wassup', 'yo']
+    # TODO: read in as list, in case we change it up more later
+    greetings = ['hola', 'que pasa', 'oye']
 
     def __init__(self, agent, kb, lexicon, realizer=None, consecutive_entity=True):
         super(SimpleSession, self).__init__(agent)
@@ -34,11 +36,11 @@ class SimpleSession(Session):
         self.num_items = len(kb.items)
         self.entity_coords = self.get_entity_coords()
         # print "ENTITY_COORDS", self.entity_coords
-        print '*'*20
-        print type(kb.items)
-        print len(kb.items)
-        print kb.items
-        print '*'*20
+        # print '*'*20
+        # print type(kb.items)
+        # print len(kb.items)
+        # print kb.items
+        # print '*'*20
 
         self.entity_weights = self.weight_entity()
         self.item_weights = [1.] * self.num_items
@@ -55,6 +57,49 @@ class SimpleSession(Session):
 
         self.capitalize = random.choice([True, False])
         self.numerical = random.choice([True, False])
+
+        # new
+        self.biling_dct = self.get_biling_dict()
+        # print self.biling_dct.keys()
+
+    # new methods
+    # 1) 
+    def get_biling_dict(self):
+        # assume each line in file has form: ENGLISH\tSPANISH
+        content = {}
+        def add_to_biling_dict(fname):
+            with open(fname, 'r') as fin:
+                for line in fin.readlines():
+                    eng, spa = line.replace('\n','').split('\t')
+                    content[eng] = spa
+
+        add_to_biling_dict('data/names.txt')
+        add_to_biling_dict('data/hobbies.txt')
+        add_to_biling_dict('data/loc.txt')
+        add_to_biling_dict('data/time.txt')
+
+        return content
+
+    def stylize(self, orig_eng):
+        eng_matrix = []
+        tokens = orig_eng.split()
+        print '*'*20
+        print 'TOKENS', tokens
+        print '*'*20
+        # print 'DICT KEYS', self.biling_dct.keys()
+        # print 'DICT VALS', self.biling_dct.values()
+        # print '*'*20
+
+        for token in tokens:
+            # if token.lower() in [s.lower() for s in self.biling_dct.keys()]:
+            if token in self.biling_dct.keys():
+                token = self.biling_dct[token]
+                print 'NEW TOKEN', token
+            eng_matrix.append(token)
+        new_str = ' '.join(eng_matrix).replace(' .','.').replace(' ?','?')
+        print 'NEW STR', new_str
+        print '*'*20
+        return new_str
 
     def get_entity_coords(self):
         '''
@@ -204,12 +249,20 @@ class SimpleSession(Session):
 
     def inform(self, facts):
         fact_str = self.fact_to_str(facts, self.num_items, prefix=random.choice([False, True]))
-        message = self.naturalize('i have %s.' % fact_str)
+        message = self.naturalize('i have %s .' % fact_str)
+        print '*'*20
+        print 'BEFORE', message
+        message = self.stylize(message) # ADDED
+        print 'AFTER', message
         return self.message(message)
 
     def ask(self, facts):
         fact_str = self.fact_to_str(facts, self.num_items, include_count=False, prefix=random.choice([False, True]), question=True)
-        message = self.naturalize('do you have any %s?' % fact_str)
+        message = self.naturalize('do you have any %s ?' % fact_str)
+        print '*'*20
+        print 'BEFORE', message
+        message = self.stylize(message) # ADDED
+        print 'AFTER', message
         return self.message(message)
 
     def answer(self, entities):
