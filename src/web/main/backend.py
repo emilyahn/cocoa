@@ -93,6 +93,7 @@ class BackendConnection(object):
     def __init__(self, params, schema, scenario_db, systems, sessions, controller_map, pairing_probabilities, lexicon):
         self.config = params
         self.conn = sqlite3.connect(params["db"]["location"])
+        self.conn.text_factory = str # @eahn added (March 2)
         self.lexicon = lexicon
 
         self.do_survey = True if "end_survey" in params.keys() and params["end_survey"] == 1 else False

@@ -9,6 +9,10 @@ from src.model.vocab import is_entity
 from src.basic.lexicon import Lexicon
 import numpy as np
 from itertools import izip
+from google.cloud import translate
+
+# Instantiates a client
+translate_client = translate.Client()
 
 num_to_word = {v: k for k, v in word_to_num.iteritems()}
 
@@ -80,6 +84,7 @@ class SimpleSession(Session):
 
         return content
 
+    # 2) 
     def stylize(self, orig_eng):
         eng_matrix = []
         tokens = orig_eng.split()
@@ -90,16 +95,21 @@ class SimpleSession(Session):
         # print 'DICT VALS', self.biling_dct.values()
         # print '*'*20
 
-        for token in tokens:
+        '''for token in tokens:
             # if token.lower() in [s.lower() for s in self.biling_dct.keys()]:
             if token in self.biling_dct.keys():
                 token = self.biling_dct[token]
                 print 'NEW TOKEN', token
             eng_matrix.append(token)
-        new_str = ' '.join(eng_matrix).replace(' .','.').replace(' ?','?')
+        new_str = ' '.join(eng_matrix).replace(' .','.').replace(' ?','?')'''
+        orig_eng = 'morning'
+        
+        translation = translate_client.translate(orig_eng, target_language='es')
+        new_str = translation['translatedText']
+
         print 'NEW STR', new_str
         print '*'*20
-        return new_str
+        return new_str.encode('utf-8')
 
     def get_entity_coords(self):
         '''
@@ -248,9 +258,11 @@ class SimpleSession(Session):
         return ' '.join(tokens)
 
     def inform(self, facts):
-        fact_str = self.fact_to_str(facts, self.num_items, prefix=random.choice([False, True]))
+        # fact_str = self.fact_to_str(facts, self.num_items, prefix=random.choice([False, True]))
+        # make prefix True to give longer, grammatical sentences
+        fact_str = self.fact_to_str(facts, self.num_items, prefix=True)
         message = self.naturalize('i have %s .' % fact_str)
-        print '*'*20
+        print '*'*20, 'inform'
         print 'BEFORE', message
         message = self.stylize(message) # ADDED
         print 'AFTER', message
@@ -259,7 +271,7 @@ class SimpleSession(Session):
     def ask(self, facts):
         fact_str = self.fact_to_str(facts, self.num_items, include_count=False, prefix=random.choice([False, True]), question=True)
         message = self.naturalize('do you have any %s ?' % fact_str)
-        print '*'*20
+        print '*'*20, 'ask'
         print 'BEFORE', message
         message = self.stylize(message) # ADDED
         print 'AFTER', message

@@ -11,9 +11,7 @@ text = u'tengo hambre'
 target = 'ko'
 
 # Translates some text into target
-translation = translate_client.translate(
-    text,
-    target_language=target)
+translation = translate_client.translate(text, target_language=target)
 
 print(u'Text: {}'.format(text))
 print(u'Translation: {}'.format(translation['translatedText']))
