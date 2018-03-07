@@ -38,35 +38,43 @@ if __name__ == '__main__':
     # xpath = "//body/div/table/td/a | //body/div/table/tr/td/a"
     # majors = scrape('http://www.a2zcolleges.com/majors', xpath, args.cache_path)
     # majors = [re.sub(r'/[^/ ]*', '', major) for major in majors]
-    # print '%d majors' % len(majors)
+    majors = scrape('data/majors.txt')
+    print '%d majors' % len(majors)
 
     # Companies
     # companies = scrape('https://en.wikipedia.org/wiki/List_of_companies_of_the_United_States', ".//*[@id='mw-content-text']/div/ul/li/a", args.cache_path)
-    # print '%d companies' % len(companies)
+    
+    # Location preference
+    companies = scrape('data/loc.txt')
+    print '%d companies' % len(companies)
 
     # Hobbies
     hobbies = scrape('data/hobbies.txt')
     print '%d hobbies' % len(hobbies)
 
     # Location preference
-    loc_pref = scrape('data/loc.txt')
+    # loc_pref = scrape('data/loc.txt')
 
     # Time preference
     time_pref = scrape('data/time.txt')
 
+    # 'loc_pref': loc_pref
+
     # Schema
     schema = {
         'values': {
+            # 'major': majors,
             'name': names,
             'hobby': hobbies,
             'time_pref': time_pref,
-            'loc_pref': loc_pref
+            'company': companies
             },
         'attributes': [
+            # {"name": "Major", "value_type": "major", "unique": False},
             {"name": "Name", "value_type": "name", "unique": False},
             {"name": "Hobby", "value_type": "hobby", "unique": False},
             {"name": "Time Preference", "value_type": "time_pref", "unique": False},
-            {"name": "Location Preference", "value_type": "loc_pref", "unique": False}
+            {"name": "Works at", "value_type": "company", "unique": False}
             ]
         }
     with open(args.schema_path, 'w') as out:

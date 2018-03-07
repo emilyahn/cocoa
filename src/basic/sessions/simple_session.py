@@ -64,27 +64,56 @@ class SimpleSession(Session):
 
         # new
         self.biling_dct = self.get_biling_dict()
+        self.phrase_table = self.get_phrase_table()
         # print self.biling_dct.keys()
 
     # new methods
     # 1) 
+    # NOTE: no distinction of entity categories, only simple dictionary look-up
     def get_biling_dict(self):
-        # assume each line in file has form: ENGLISH\tSPANISH
-        content = {}
+        # assume each line in file has tab-separated fields: EN, SP
+        content_en = {}
+        content_sp = {}
+
         def add_to_biling_dict(fname):
             with open(fname, 'r') as fin:
                 for line in fin.readlines():
                     eng, spa = line.replace('\n','').split('\t')
-                    content[eng] = spa
+                    content_en[eng] = spa
+                    content_sp[spa] = eng
 
         add_to_biling_dict('data/names.txt')
         add_to_biling_dict('data/hobbies.txt')
         add_to_biling_dict('data/loc.txt')
         add_to_biling_dict('data/time.txt')
+        add_to_biling_dict('data/majors.txt')
 
-        return content
+        return dict([('en', content_en), ('sp', content_sp)])
 
     # 2) 
+    ''' returns:    phrase_table['en'][eng_word] = list({spa_word: attrib})
+                    phrase_table['sp'][spa_word]['eng'] = eng_word
+                    phrase_table['sp'][spa_word]['attrib'] = attrib
+    '''
+    def get_phrase_table(self):
+        # assume each line in file has fields: EN, SP, number, gender, formal
+        content_en = defaultdict(list)
+        content_sp = {}
+
+        with open('data/fillers.txt', 'r') as fin:
+            for line in fin.readlines():
+                eng, spa, num, gender, formal = line.replace('\n','').split('\t')
+                attrib = ','.join([num, gender, formal])
+                span_attrib = {}
+                span_attrib[spa]['attrib'] = attrib
+                content_en[eng].append(span_attrib)
+
+                content_sp[spa]['eng'] = eng
+                content_sp[spa]['attrib'] = attrib
+
+        return dict([('en', content_en), ('sp', content_sp)])
+
+    # 3)
     def stylize(self, orig_eng):
         eng_matrix = []
         tokens = orig_eng.split()
@@ -218,7 +247,9 @@ class SimpleSession(Session):
                         p = 'who studied'
                     else:
                         # modified singular surface form of like --> 'likes'
-                        p = random.choice(['who like' if count > 1 else 'who likes', 'into'])
+                        # remove option 'into' 
+                        # p = random.choice(['who like' if count > 1 else 'who likes', 'into'])
+                        p = random.choice(['who like' if count > 1 else 'who likes'])
                     new_str.append(p + ' ' + s)
                 entities_str = new_str
             conj = '%s' % ('friends' if count > 1 else 'friend') if prefix else ''
@@ -269,7 +300,8 @@ class SimpleSession(Session):
         return self.message(message)
 
     def ask(self, facts):
-        fact_str = self.fact_to_str(facts, self.num_items, include_count=False, prefix=random.choice([False, True]), question=True)
+        # fact_str = self.fact_to_str(facts, self.num_items, include_count=False, prefix=random.choice([False, True]), question=True)
+        fact_str = self.fact_to_str(facts, self.num_items, include_count=False, prefix=True, question=True)
         message = self.naturalize('do you have any %s ?' % fact_str)
         print '*'*20, 'ask'
         print 'BEFORE', message
@@ -277,7 +309,7 @@ class SimpleSession(Session):
         print 'AFTER', message
         return self.message(message)
 
-    def answer(self, entities):
+    def answer(self, entities): #TODO: HANDLE RECEIVING
         fact = self.entity_to_fact(entities)
         return self.inform(fact)
 
@@ -342,14 +374,14 @@ class SimpleSession(Session):
             return True
         return False
 
-    def is_question(self, tokens):
+    def is_question(self, tokens): #TODO: HANDLE RECEIVING
         first_word = tokens[0]
         last_word = tokens[-1]
         if last_word == '?' or first_word in ('do', 'does', 'what', 'any'):
             return True
         return False
 
-    def receive(self, event):
+    def receive(self, event): #TODO: HANDLE RECEIVING
         self.sent_entity = False
         if event.action == 'message':
             raw_utterance = event.data
