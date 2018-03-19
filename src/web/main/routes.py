@@ -153,7 +153,9 @@ def text():
     backend = get_backend()
     message = request.args.get('message')
     logger.debug("User %s said: %s" % (userid_prefix(), message))
-    displayed_message = format_message("You: {}".format(message), False)
+    # utf-8
+    encoded_message = message.encode('utf-8')
+    displayed_message = format_message("You: {}".format(encoded_message), False)
     uid = userid()
     time_taken = float(request.args.get('time_taken'))
     received_time = time.time()

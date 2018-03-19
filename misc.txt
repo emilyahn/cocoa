@@ -1,0 +1,47 @@
+**************
+cases to handle:
+**************
+
+  File "/Users/eahn/work/cocoa/src/web/main/routes.py", line 156, in text
+    displayed_message = format_message("You: {}".format(message), False)
+UnicodeEncodeError: 'ascii' codec can't encode character u'\xed' in position 1: ordinal not in range(128)
+Thu Mar 15 17:48:09 2018 {'REMOTE_PORT': '57362', 'HTTP_HOST': '127.0.0.1:5000', 'REMOTE_ADDR': '::ffff:127.0.0.1', (hidden keys: 25)} failed with UnicodeEncodeError
+
+  File "/Users/eahn/work/cocoa/src/web/main/routes.py", line 157, in text
+    logger.debug("User %s said: %s" % (userid_prefix(), message))
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 1: ordinal not in range(128)
+Mon Mar 19 15:41:50 2018 {'REMOTE_PORT': '57392', 'HTTP_HOST': '127.0.0.1:5000', 'REMOTE_ADDR': '::ffff:127.0.0.1', (hidden keys: 25)} failed with UnicodeDecodeError
+
+  File "/Users/eahn/work/cocoa/src/basic/sessions/simple_session.py", line 410, in receive
+    entity_tokens = self.lexicon.link_entity(tokenize(raw_utterance), kb=self.kb, mentioned_entities=self.mentioned_entities, known_kb=False)
+  File "/Users/eahn/work/cocoa/src/model/preprocess.py", line 26, in tokenize
+    utterance = utterance.encode('utf-8').lower()
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 1: ordinal not in range(128)
+Mon Mar 19 15:46:59 2018 {'REMOTE_PORT': '57786', 'HTTP_HOST': '127.0.0.1:5000', 'REMOTE_ADDR': '::ffff:127.0.0.1', (hidden keys: 25)} failed with UnicodeDecodeError
+
+
+
+**************
+REF
+**************
+
+ENTITY_COORDS
+
+{(u'jennifer', u'name'): [1, 3, 5], 
+(u'amateur astronomy', u'hobby'): [0, 2, 3], 
+(u'abigail', u'name'): [0, 2, 4], 
+(u'other religious affiliation', u'major'): [2, 3], 
+(u'technical and business writing', u'major'): [0, 5], 
+(u'satellite watching', u'hobby'): [4, 5], 
+(u'astrology', u'hobby'): [1], 
+(u'japanese', u'major'): [4], 
+(u'equestrian studies', u'major'): [1]}
+
+
+[{u'Hobby': u'Reading', u'Name': u'Doris', u'Location Preference': u'outdoor'}, 
+{u'Hobby': u'Hobbies', u'Name': u'Anna', u'Location Preference': u'outdoor'}, 
+{u'Hobby': u'Trainspotting', u'Name': u'Anna', u'Location Preference': u'outdoor'}, 
+{u'Hobby': u'Astrology', u'Name': u'Willie', u'Location Preference': u'outdoor'}, 
+{u'Hobby': u'Hobbies', u'Name': u'Benjamin', u'Location Preference': u'outdoor'}, 
+{u'Hobby': u'Horseback riding', u'Name': u'Peter', u'Location Preference': u'outdoor'}, {u'Hobby': u'Satellite watching', u'Name': u'Doris', u'Location Preference': u'indoor'}]
+

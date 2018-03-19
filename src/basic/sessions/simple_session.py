@@ -78,15 +78,20 @@ class SimpleSession(Session):
         def add_to_biling_dict(fname):
             with open(fname, 'r') as fin:
                 for line in fin.readlines():
-                    eng, spa = line.replace('\n','').split('\t')
+                    eng, spa = line.replace('\n','').decode('utf-8').split('\t')
                     content_en[eng] = spa
                     content_sp[spa] = eng
 
-        add_to_biling_dict('data/names.txt')
+        # add_to_biling_dict('data/names.txt')
         add_to_biling_dict('data/hobbies.txt')
         add_to_biling_dict('data/loc.txt')
         add_to_biling_dict('data/time.txt')
         add_to_biling_dict('data/majors.txt')
+        content_en['friend'] = 'amigo'
+        content_en['friends'] = 'amigos'
+        content_sp['amigo'] = 'friend'
+        content_sp['amigos'] = 'friends'
+
 
         return dict([('en', content_en), ('sp', content_sp)])
 
@@ -98,13 +103,13 @@ class SimpleSession(Session):
     def get_phrase_table(self):
         # assume each line in file has fields: EN, SP, number, gender, formal
         content_en = defaultdict(list)
-        content_sp = {}
+        content_sp = defaultdict(dict)
 
         with open('data/fillers.txt', 'r') as fin:
             for line in fin.readlines():
-                eng, spa, num, gender, formal = line.replace('\n','').split('\t')
+                eng, spa, num, gender, formal = line.replace('\n','').decode('utf-8').split('\t')
                 attrib = ','.join([num, gender, formal])
-                span_attrib = {}
+                span_attrib = defaultdict(dict)
                 span_attrib[spa]['attrib'] = attrib
                 content_en[eng].append(span_attrib)
 
@@ -114,28 +119,44 @@ class SimpleSession(Session):
         return dict([('en', content_en), ('sp', content_sp)])
 
     # 3)
-    def stylize(self, orig_eng):
-        eng_matrix = []
-        tokens = orig_eng.split()
-        print '*'*20
-        print 'TOKENS', tokens
-        print '*'*20
-        # print 'DICT KEYS', self.biling_dct.keys()
-        # print 'DICT VALS', self.biling_dct.values()
-        # print '*'*20
-
-        '''for token in tokens:
-            # if token.lower() in [s.lower() for s in self.biling_dct.keys()]:
-            if token in self.biling_dct.keys():
-                token = self.biling_dct[token]
-                print 'NEW TOKEN', token
-            eng_matrix.append(token)
-        new_str = ' '.join(eng_matrix).replace(' .','.').replace(' ?','?')'''
-        orig_eng = 'morning'
+    def stylize(self, orig_eng, style_type='en_lex'):
+        en_tokens = orig_eng.split()
         
-        translation = translate_client.translate(orig_eng, target_language='es')
-        new_str = translation['translatedText']
 
+        # STYLE 1: EN as matrix, replace SP nouns
+        def en_lex():
+            new_str = orig_eng
+            for en_chunk, sp_chunk in self.biling_dct['en'].iteritems():
+                # if en_chunk in new_str:
+                new_str = new_str.replace(en_chunk, sp_chunk)
+            return new_str
+
+            # eng_matrix = []
+            # for token in en_tokens:
+            #     if token in self.biling_dct['en'].keys():
+            #         token = self.biling_dct['en'][token]
+            #         print 'NEW TOKEN', token
+            #     eng_matrix.append(token)
+            # new_str = ' '.join(eng_matrix)
+
+        # STYLE 2: SP as matrix, replace EN nouns
+        def sp_lex():
+            translation = translate_client.translate(orig_eng, target_language='es')
+            orig_spa = translation['translatedText'].replace('.',' .').replace('?',' ?')
+
+            new_str = orig_spa
+            for sp_chunk, en_chunk in self.biling_dct['sp'].iteritems():
+                # if sp_chunk in new_str:
+                new_str = new_str.replace(sp_chunk, en_chunk)
+            return new_str
+        
+        if style_type=='en_lex':
+            new_str = en_lex()
+        elif style_type=='sp_lex':
+            new_str = sp_lex()
+
+        # new_str = new_str.replace(' .','.').replace(' ?','?')
+        print '*'*20
         print 'NEW STR', new_str
         print '*'*20
         return new_str.encode('utf-8')
@@ -292,7 +313,8 @@ class SimpleSession(Session):
         # fact_str = self.fact_to_str(facts, self.num_items, prefix=random.choice([False, True]))
         # make prefix True to give longer, grammatical sentences
         fact_str = self.fact_to_str(facts, self.num_items, prefix=True)
-        message = self.naturalize('i have %s .' % fact_str)
+        # message = self.naturalize('i have %s .' % fact_str)
+        message = self.naturalize('i have %s' % fact_str) # remove period @ sent end
         print '*'*20, 'inform'
         print 'BEFORE', message
         message = self.stylize(message) # ADDED
