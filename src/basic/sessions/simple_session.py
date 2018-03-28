@@ -27,7 +27,7 @@ class SimpleSession(Session):
 
     # greetings = ['hi', 'hello', 'hey', 'hiya']
     # TODO: read in as list, in case we change it up more later
-    greetings = ['hola', 'que pasa', 'oye']
+    greetings = ['hola', 'que pasa']  # 'oye'
 
     def __init__(self, agent, kb, lexicon, realizer=None, consecutive_entity=True):
         super(SimpleSession, self).__init__(agent)
@@ -68,7 +68,7 @@ class SimpleSession(Session):
         # print self.biling_dct.keys()
 
     # new methods
-    # 1) 
+    # 1)
     # NOTE: no distinction of entity categories, only simple dictionary look-up
     def get_biling_dict(self):
         # assume each line in file has tab-separated fields: EN, SP
@@ -95,19 +95,19 @@ class SimpleSession(Session):
 
         return dict([('en', content_en), ('sp', content_sp)])
 
-    # 2) 
+    # 2)
     ''' returns:    phrase_table['en'][eng_word] = list({spa_word: attrib})
                     phrase_table['sp'][spa_word]['eng'] = eng_word
                     phrase_table['sp'][spa_word]['attrib'] = attrib
     '''
     def get_phrase_table(self):
-        # assume each line in file has fields: EN, SP, number, gender, formal
+        # assume each line in file has fields: EN, SP, number, gender, formal, tense
         content_en = defaultdict(list)
         content_sp = defaultdict(dict)
 
         with open('data/fillers.txt', 'r') as fin:
             for line in fin.readlines():
-                eng, spa, num, gender, formal = line.replace('\n','').decode('utf-8').split('\t')
+                eng, spa, num, gender, formal, tense = line.replace('\n','').decode('utf-8').split('\t')
                 attrib = ','.join([num, gender, formal])
                 span_attrib = defaultdict(dict)
                 span_attrib[spa]['attrib'] = attrib
@@ -120,8 +120,7 @@ class SimpleSession(Session):
 
     # 3)
     def stylize(self, orig_eng, style_type='en_lex'):
-        en_tokens = orig_eng.split()
-        
+        # en_tokens = orig_eng.split()
 
         # STYLE 1: EN as matrix, replace SP nouns
         def en_lex():
@@ -142,17 +141,17 @@ class SimpleSession(Session):
         # STYLE 2: SP as matrix, replace EN nouns
         def sp_lex():
             translation = translate_client.translate(orig_eng, target_language='es')
-            orig_spa = translation['translatedText'].replace('.',' .').replace('?',' ?')
+            orig_spa = translation['translatedText'].replace('.', ' .').replace('?', ' ?')
 
             new_str = orig_spa
             for sp_chunk, en_chunk in self.biling_dct['sp'].iteritems():
                 # if sp_chunk in new_str:
                 new_str = new_str.replace(sp_chunk, en_chunk)
             return new_str
-        
-        if style_type=='en_lex':
+
+        if style_type == 'en_lex':
             new_str = en_lex()
-        elif style_type=='sp_lex':
+        elif style_type == 'sp_lex':
             new_str = sp_lex()
 
         # new_str = new_str.replace(' .','.').replace(' ?','?')
@@ -268,7 +267,7 @@ class SimpleSession(Session):
                         p = 'who studied'
                     else:
                         # modified singular surface form of like --> 'likes'
-                        # remove option 'into' 
+                        # remove option 'into'
                         # p = random.choice(['who like' if count > 1 else 'who likes', 'into'])
                         p = random.choice(['who like' if count > 1 else 'who likes'])
                     new_str.append(p + ' ' + s)
@@ -407,9 +406,18 @@ class SimpleSession(Session):
         self.sent_entity = False
         if event.action == 'message':
             raw_utterance = event.data
-            entity_tokens = self.lexicon.link_entity(tokenize(raw_utterance), kb=self.kb, mentioned_entities=self.mentioned_entities, known_kb=False)
+
+            # handle bilingual. translate into English no matter what source lang is
+            translation = translate_client.translate(raw_utterance, target_language='en')
+            new_eng = translation['translatedText']
+            # entity_tokens = self.lexicon.link_entity(tokenize(raw_utterance), kb=self.kb, mentioned_entities=self.mentioned_entities, known_kb=False)
+            entity_tokens = self.lexicon.link_entity(tokenize(new_eng), kb=self.kb, mentioned_entities=self.mentioned_entities, known_kb=False)
             for token in entity_tokens:
                 if is_entity(token):
+                    # it works!!
+                    # print '***'
+                    # print 'IS ENTITY:', token
+                    # print '***'
                     self.mentioned_entities.add(token[1][0])
             entities = [word[1] for word in entity_tokens if is_entity(word)]
 

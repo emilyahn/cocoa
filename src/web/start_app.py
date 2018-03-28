@@ -197,6 +197,14 @@ if __name__ == "__main__":
     else:
         raise ValueError("Location of file containing instructions for task should be specified in config with the key "
                          "'instructions")
+    instructions_span = None
+    if 'instructions_span' in params.keys():
+        instructions_span_file = open(params['instructions_span'], 'r')
+        instructions_span = "".join(instructions_span_file.readlines())
+        instructions_span_file.close()
+    else:
+        raise ValueError("Location of file containing spanish instructions for task should be specified in config with the key "
+                         "'instructions_span")
 
     templates_dir = None
     if 'templates_dir' in params.keys():
@@ -245,7 +253,9 @@ if __name__ == "__main__":
     app.config['sessions'] = defaultdict(None)
     app.config['controller_map'] = defaultdict(None)
     app.config['instructions'] = instructions
+    app.config['instructions_span'] = instructions_span
     app.config['task_title'] = params['task_title']
+    app.config['task_title_span'] = params['task_title_span']
     if 'icon' not in params.keys():
         app.config['task_icon'] = 'handshake.jpg'
     else:

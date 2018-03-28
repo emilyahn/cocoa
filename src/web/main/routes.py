@@ -208,6 +208,7 @@ def index():
                                waiting_message=waiting_info.message,
                                uid=userid(),
                                title=app.config['task_title'],
+                               title_span=app.config['task_title_span'],
                                icon=app.config['task_icon'])
     elif status == Status.Finished:
         logger.info("Getting finished information for user %s" % userid()[:6])
@@ -238,7 +239,9 @@ def index():
                                attributes=[attr.name for attr in chat_info.attributes],
                                num_seconds=chat_info.num_seconds,
                                title=app.config['task_title'],
+                               title_span=app.config['task_title_span'],
                                instructions=Markup(app.config['instructions']),
+                               instructions_span=Markup(app.config['instructions_span'].decode('utf-8')),
                                icon=app.config['task_icon'],
                                partner_kb=partner_kb,
                                quit_enabled=app.config['user_params']['skip_chat_enabled'],
