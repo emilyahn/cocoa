@@ -324,17 +324,17 @@
 			<tr>
 			<th><b>#</b></th>
 			{% for attr in attributes %}
-			<th>{{ attr}}</th>
+			<th align="center">{{ attr }}<br/>{{ attributes_span[loop.index - 1] }}</th>
 			{% endfor %}
 			</tr>
 			</thead>
 			<tbody>
-				{% set ctr = 3 %}
 				{% for item in kb %}
+				{% set item_idx = loop.index - 1 %}
 				<tr>
-					<td><a href="javascript:void(0)" onclick="makeSelection({{ loop.index - 1 }})"><b>Select</b></a></td>
+					<td><a href="javascript:void(0)" onclick="makeSelection({{ item_idx }})"><b>Select</b></a></td>
 					{% for attr in attributes %}
-					<td>{{item[attr]}}</td>
+					<td align="center">{{item[attr]}}{% if attr != 'Name' %}<br/>{{kb_span[item_idx][attributes_span[loop.index - 1]]}}{% endif %}</td>
 					{% endfor %}
 				</tr>
 				{% endfor %}

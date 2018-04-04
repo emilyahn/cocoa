@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     # Companies
     # companies = scrape('https://en.wikipedia.org/wiki/List_of_companies_of_the_United_States', ".//*[@id='mw-content-text']/div/ul/li/a", args.cache_path)
-    
+
     # Location preference
     companies = scrape('data/loc.txt')
     print '%d companies' % len(companies)
@@ -63,17 +63,17 @@ if __name__ == '__main__':
     # Schema
     schema = {
         'values': {
-            # 'major': majors,
+            'major': majors,
             'name': names,
             'hobby': hobbies,
             'time_pref': time_pref,
             'company': companies
             },
         'attributes': [
-            # {"name": "Major", "value_type": "major", "unique": False},
+            {"name": "Major", "value_type": "major", "unique": False},
             {"name": "Name", "value_type": "name", "unique": False},
             {"name": "Hobby", "value_type": "hobby", "unique": False},
-            {"name": "Time Preference", "value_type": "time_pref", "unique": False},
+            {"name": "Time", "value_type": "time_pref", "unique": False},
             {"name": "Works at", "value_type": "company", "unique": False}
             ]
         }

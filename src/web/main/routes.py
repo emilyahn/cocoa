@@ -14,6 +14,7 @@ from . import main
 from web_utils import get_backend
 from backend import Status
 from src.basic.event import Event
+# from src.basic.sessions.simple_session import SimpleSession
 
 logger = logging.getLogger(__name__)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -21,6 +22,32 @@ handler = logging.FileHandler("chat.log")
 handler.setLevel(logging.INFO)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
+
+
+def get_biling_dict():
+    # assume each line in file has tab-separated fields: EN, SP
+    content_en = {}
+
+    def add_to_biling_dict(fname):
+        with open(fname, 'r') as fin:
+            for line in fin.readlines():
+                eng, spa = line.replace('\n', '').decode('utf-8').split('\t')
+                content_en[eng] = spa
+
+    # add_to_biling_dict('data/names.txt')
+    add_to_biling_dict('data/hobbies.txt')
+    add_to_biling_dict('data/loc.txt')
+    add_to_biling_dict('data/time.txt')
+    add_to_biling_dict('data/majors.txt')
+    content_en['Name'] = 'Nombre'
+    content_en['Time'] = 'Tiempo'
+    content_en['Hobby'] = 'Hobby'
+    content_en['Works at'] = 'Trabaja en'
+    content_en['Major'] = 'Especialidad'
+
+    return content_en
+
+en2sp_dict = get_biling_dict()
 
 
 def generate_userid():
@@ -230,13 +257,37 @@ def index():
         if request.args.get('peek') is not None and request.args.get('peek') == '1':
             peek = True
         chat_info = backend.get_chat_info(userid(), peek=peek)
+
+        old_attrib = chat_info.attributes
+        biling_attrib = [en2sp_dict[attr.name] for attr in old_attrib]
+        old_kb = chat_info.kb.to_dict()
+        biling_kb = []
+        # for attr in old_attrib:  # 'Time', 'Works at'...
+        #     # import pdb; pdb.set_trace()
+        #     new_attrib = '{} / {}'.format(attr.name, en2sp_dict[attr.name])  # .encode('utf-8'))
+        #     biling_attrib.append(new_attrib)
+        for item in old_kb:
+            entry = {}
+            # import pdb; pdb.set_trace()
+            for i, new_attrib in enumerate(biling_attrib):
+                old_attr = old_attrib[i].name
+                if old_attr == 'Name':
+                    entry[new_attrib] = item[old_attr]
+                else:
+                    # entry[new_attrib] = '{} / {}'.format(item[old_attr], en2sp_dict[item[old_attr]].encode('utf-8'))
+                    entry[new_attrib] = en2sp_dict[item[old_attr]].encode('utf-8')
+                    entry[new_attrib] = entry[new_attrib].decode('utf-8')
+            biling_kb.append(entry)
+
         partner_kb = None
         if peek:
             partner_kb = chat_info.partner_kb.to_dict()
         return render_template('chat.html',
                                uid=userid(),
-                               kb=chat_info.kb.to_dict(),
-                               attributes=[attr.name for attr in chat_info.attributes],
+                               kb=old_kb,
+                               kb_span=biling_kb,
+                               attributes=[attr.name for attr in old_attrib],
+                               attributes_span=biling_attrib,
                                num_seconds=chat_info.num_seconds,
                                title=app.config['task_title'],
                                title_span=app.config['task_title_span'],

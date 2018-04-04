@@ -28,7 +28,7 @@ PYTHONPATH=. python src/main.py --schema-path data/schema.json --scenarios-path 
 --node-embed-in-rnn-inputs --msg-aggregation max --word-embed-size 100 --node-embed-size 50
 --entity-hist-len -1 --learned-utterance-decay
 
-### alignment
+### change in app_params to HTML
 adding to routes/html. Example add 'title_task_span'
 * data/web/app_params.json : "task_title_span": "¿Quién es nuestro amigo en común?"
 * src/web/start_app.py :`app.config['task_title_span'] = params['task_title_span']`

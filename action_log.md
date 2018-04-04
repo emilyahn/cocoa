@@ -24,5 +24,9 @@ atools -i align.en2sp -j align.sp2en -c grow-diag-final-and > aligned.gdfa
 PYTHONPATH=. python src/scripts/generate_schema.py --schema-path data/mini_schema.json
 PYTHONPATH=. python src/scripts/generate_scenarios.py --schema-path data/mini_schema.json --scenarios-path data/mini_scenarios.json --num-scenarios 10 --random-attributes --random-items --alphas 0.3 1 3
 # to run full with new schema
-PYTHONPATH=. python src/web/start_app.py --port 5000 --schema-path data/mini_schema.json --scenarios-path data/mini_scenarios.json --config data/web/app_params.json
+PYTHONPATH=. python src/web/start_app.py --port 5000 --schema-path data/mini_schema.json --scenarios-path data/mini_scenarios.json --config data/web/app_params.json```
+
+### 3 April
+PYTHONPATH=. python src/scripts/generate_schema.py --schema-path data/mini_schema.json
+PYTHONPATH=. python src/scripts/generate_scenarios.py --schema-path data/mini_schema.json --scenarios-path data/mini_scenarios.json --num-scenarios 10 --random-attributes --random-items --alphas 0.3 1 3 --min-items 8 --max-items 8
 ```

@@ -70,7 +70,8 @@ class SimpleSession(Session):
     # new methods
     # 1)
     # NOTE: no distinction of entity categories, only simple dictionary look-up
-    def get_biling_dict(self):
+    @staticmethod
+    def get_biling_dict():
         # assume each line in file has tab-separated fields: EN, SP
         content_en = {}
         content_sp = {}
