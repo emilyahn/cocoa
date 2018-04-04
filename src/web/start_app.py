@@ -37,7 +37,7 @@ def add_website_arguments(parser):
     parser.add_argument('--config', type=str, default='app_params.json',
                         help='Path to JSON file containing configurations for website')
     parser.add_argument('--output', type=str,
-                        default="web_output/{}".format(datetime.now().strftime("%Y-%m-%d")),
+                        default="web_output/{}".format(datetime.now().strftime("%Y-%m-%d-%H-%M-%S")),
                         help='Name of directory for storing website output (debug and error logs, chats, '
                              'and database). Defaults to a web_output/current_date, with the current date formatted as '
                              '%%Y-%%m-%%d. '
@@ -169,6 +169,9 @@ def init(output_dir):
 
 
 if __name__ == "__main__":
+    root_path = os.path.split(os.path.abspath(
+        os.path.dirname(os.path.dirname(__file__))))[0]
+
     parser = argparse.ArgumentParser()
     add_website_arguments(parser)
     add_scenario_arguments(parser)
@@ -191,7 +194,8 @@ if __name__ == "__main__":
 
     instructions = None
     if 'instructions' in params.keys():
-        instructions_file = open(params['instructions'], 'r')
+        instructions_file_path = os.path.join(root_path, params['instructions'])
+        instructions_file = open(instructions_file_path, 'r')
         instructions = "".join(instructions_file.readlines())
         instructions_file.close()
     else:
@@ -199,16 +203,17 @@ if __name__ == "__main__":
                          "'instructions")
     instructions_span = None
     if 'instructions_span' in params.keys():
-        instructions_span_file = open(params['instructions_span'], 'r')
+        instructions_file_path = os.path.join(root_path, params['instructions_span'])
+        instructions_span_file = open(instructions_file_path, 'r')
         instructions_span = "".join(instructions_span_file.readlines())
         instructions_span_file.close()
     else:
         raise ValueError("Location of file containing spanish instructions for task should be specified in config with the key "
                          "'instructions_span")
-
+    # import pdb; pdb.set_trace()
     templates_dir = None
     if 'templates_dir' in params.keys():
-        templates_dir = params['templates_dir']
+        templates_dir = os.path.join(root_path, params['templates_dir'])
     else:
         raise ValueError("Location of HTML templates should be specified in config with the key templates_dir")
     if not os.path.exists(templates_dir):

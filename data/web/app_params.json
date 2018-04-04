@@ -18,10 +18,10 @@
     },
 
     "connection_timeout_num_seconds": 3,
-    "templates_dir": "/Users/eahn/work/cocoa/src/web/templates",
+    "templates_dir": "src/web/templates",
     "end_survey": 1,
-    "instructions": "/Users/eahn/work/cocoa/data/web/mutual-friends-instructions.html",
-    "instructions_span": "/Users/eahn/work/cocoa/data/web/spanish-friends-instructions.html",
+    "instructions": "data/web/mutual-friends-instructions.html",
+    "instructions_span": "data/web/spanish-friends-instructions.html",
     "task_title": "Who's Our Mutual Friend?",
     "task_title_span": "¿Quién es nuestro amigo en común?",
     "icon": "handshake.jpg",
