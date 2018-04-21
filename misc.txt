@@ -1,9 +1,7 @@
 [-] make PARTNER chat in BOLD (and color?)
+	--> jinja formatting (like in file waiting.html)
 [-] remove <You entered room>
-[+] Translate title:
-[+] it's ok for brief instructions to be Eng first
-[+] 8min, 8 items per friends table
-[+] Time/Tiempo
+	--> route.py: @check_inbox
 
 order of presentation of ENG/SPA or SPA/ENG could have big impact
 - instructions

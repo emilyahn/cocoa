@@ -29,7 +29,7 @@ class SimpleSession(Session):
     # TODO: read in as list, in case we change it up more later
     greetings = ['hola', 'que pasa']  # 'oye'
 
-    def __init__(self, agent, kb, lexicon, realizer=None, consecutive_entity=True):
+    def __init__(self, agent, kb, lexicon, style, realizer=None, consecutive_entity=True):
         super(SimpleSession, self).__init__(agent)
         self.agent = agent
         self.kb = kb
@@ -37,14 +37,17 @@ class SimpleSession(Session):
         self.lexicon = lexicon
         self.realizer = realizer
         self.consecutive_entity = consecutive_entity
+        self.style = style
         self.num_items = len(kb.items)
         self.entity_coords = self.get_entity_coords()
         # print "ENTITY_COORDS", self.entity_coords
         # print '*'*20
         # print type(kb.items)
         # print len(kb.items)
-        # print kb.items
-        # print '*'*20
+        print kb.items
+        print '*'*20
+        print self.style
+        print '*'*20
 
         self.entity_weights = self.weight_entity()
         self.item_weights = [1.] * self.num_items
@@ -120,7 +123,7 @@ class SimpleSession(Session):
         return dict([('en', content_en), ('sp', content_sp)])
 
     # 3)
-    def stylize(self, orig_eng, style_type='en_lex'):
+    def stylize(self, orig_eng):
         # en_tokens = orig_eng.split()
 
         # STYLE 1: EN as matrix, replace SP nouns
@@ -130,14 +133,6 @@ class SimpleSession(Session):
                 # if en_chunk in new_str:
                 new_str = new_str.replace(en_chunk, sp_chunk)
             return new_str
-
-            # eng_matrix = []
-            # for token in en_tokens:
-            #     if token in self.biling_dct['en'].keys():
-            #         token = self.biling_dct['en'][token]
-            #         print 'NEW TOKEN', token
-            #     eng_matrix.append(token)
-            # new_str = ' '.join(eng_matrix)
 
         # STYLE 2: SP as matrix, replace EN nouns
         def sp_lex():
@@ -150,10 +145,30 @@ class SimpleSession(Session):
                 new_str = new_str.replace(sp_chunk, en_chunk)
             return new_str
 
+        # STYLE 3: begin in ENG, switch to SPA after mention of "friend/s"
+        def en2sp():
+            translation = translate_client.translate(orig_eng, target_language='es')
+            orig_spa = translation['translatedText'].replace('.', ' .').replace('?', ' ?')
+            orig_spa = re.sub(r'(amigo\w*)', r'\1 #', orig_spa)
+            orig_spa_tokens = orig_spa.split()
+            idx_split = orig_spa_tokens.index('#')
+            to_flip = ' '.join(orig_spa_tokens[:idx_split])
+            no_change = ' '.join(orig_spa_tokens[idx_split + 1:])
+            for spa_word, vals in self.phrase_table['sp'].iteritems():
+                if spa_word in to_flip:
+                    import pdb; pdb.set_trace()
+                    to_flip = to_flip.replace(spa_word, vals['eng'])
+
+            return to_flip + ' ' + no_change
+
+        # style_type = self.style
+        style_type = 'en2sp'
         if style_type == 'en_lex':
             new_str = en_lex()
         elif style_type == 'sp_lex':
             new_str = sp_lex()
+        elif style_type == 'en2sp':
+            new_str = en2sp()
 
         # new_str = new_str.replace(' .','.').replace(' ?','?')
         print '*'*20

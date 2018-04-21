@@ -58,11 +58,14 @@ if __name__ == '__main__':
     # Time preference
     time_pref = scrape('data/time.txt')
 
-    # 'loc_pref': loc_pref
+    # style options!! crux of this research!
+    styles = ['en_lex', 'sp_lex']
+    print '%d styles' % len(styles)
 
     # Schema
     schema = {
         'values': {
+            # 'style': styles,
             'major': majors,
             'name': names,
             'hobby': hobbies,
@@ -70,12 +73,14 @@ if __name__ == '__main__':
             'company': companies
             },
         'attributes': [
+            # {"name": "Style", "value_type": "style", "unique": False},
             {"name": "Major", "value_type": "major", "unique": False},
             {"name": "Name", "value_type": "name", "unique": False},
             {"name": "Hobby", "value_type": "hobby", "unique": False},
             {"name": "Time", "value_type": "time_pref", "unique": False},
             {"name": "Works at", "value_type": "company", "unique": False}
-            ]
+            ],
+        'styles': styles
         }
     with open(args.schema_path, 'w') as out:
         #json.dump(schema, out)

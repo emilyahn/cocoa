@@ -16,8 +16,8 @@ class SimpleSystem(System):
     def name(cls):
         return 'simple'
 
-    def new_session(self, agent, kb):
-        session = SimpleSession(agent, kb, self.lexicon, self.realizer, self.consecutive_entity)
+    def new_session(self, agent, kb, style):
+        session = SimpleSession(agent, kb, self.lexicon, style, self.realizer, self.consecutive_entity)
         if self.timed_session:
             session = TimedSessionWrapper(agent, session)
 	return session

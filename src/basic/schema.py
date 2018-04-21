@@ -30,6 +30,8 @@ class Schema(object):
         # List of attributes (e.g., place_of_birth)
         attributes = [Attribute.from_json(a) for a in raw['attributes']]
         self.attr_names = [attr.name for attr in attributes]
+        # NEW
+        self.styles = raw['styles']
 
         def _get_subset(attr_names):
             subset_attributes = [attr for attr in attributes if attr.name in attr_names]

@@ -1,7 +1,5 @@
 import json
 
-__author__ = 'anushabala'
-
 import uuid
 import logging
 from datetime import datetime
@@ -15,6 +13,8 @@ from web_utils import get_backend
 from backend import Status
 from src.basic.event import Event
 # from src.basic.sessions.simple_session import SimpleSession
+
+__author__ = 'anushabala'
 
 logger = logging.getLogger(__name__)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -210,8 +210,22 @@ def select():
     return jsonify(message=displayed_message)
 
 
+@main.route('/', methods=['GET'])
+def home():
+    return render_template('recruit.html',
+                           title=app.config['task_title'],
+                           title_span=app.config['task_title_span'],
+                           instructions=Markup(app.config['instructions']),
+                           instructions_span=Markup(app.config['instructions_span'].decode('utf-8')),
+                           icon=app.config['task_icon'])
+
+
+@main.route('/screening', methods=['GET'])
+def screen():
+    return render_template('screening.html')
+
+
 @main.route('/index', methods=['GET', 'POST'])
-@main.route('/', methods=['GET', 'POST'])
 def index():
     """Chat room. The user's name and room must be stored in
     the session."""

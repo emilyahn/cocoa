@@ -14,7 +14,7 @@ def read_human_from_json(infile):
 		if chat['agents']['0'] == 'bot':
 			idx = 1
 		for event in chat['events']:
-			if not event['action'] == 'message': continue # not 'select'
+			if not event['action'] == 'message': continue # e.g. action == 'select'
 			msg = event['data']
 			agent = event['agent']
 			if agent == idx:

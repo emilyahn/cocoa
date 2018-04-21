@@ -29,4 +29,10 @@ PYTHONPATH=. python src/web/start_app.py --port 5000 --schema-path data/mini_sch
 ### 3 April
 PYTHONPATH=. python src/scripts/generate_schema.py --schema-path data/mini_schema.json
 PYTHONPATH=. python src/scripts/generate_scenarios.py --schema-path data/mini_schema.json --scenarios-path data/mini_scenarios.json --num-scenarios 10 --random-attributes --random-items --alphas 0.3 1 3 --min-items 8 --max-items 8
+
+### 10 April
+created:
+* data/mini_schema_style.json
+* data/mini_scenarios_style.json
+added param of style to scenarios. Num of scenarios in json = (--num-scenarios * num_styles) -- styles determined by list in `src/scripts/generate_schema.py`
 ```

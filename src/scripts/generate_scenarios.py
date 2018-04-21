@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--random-seed', help='Random seed', type=int, default=1)
 parser.add_argument('--num-scenarios', help='Number of scenarios to generate', type=int, default=1)
 parser.add_argument('--num-items', help='Number of items to generate per scenario', type=int, default=10)
+parser.add_argument('--num-styles', help='Number of styles to generate per scenario', type=int, default=2)
 parser.add_argument('--domain', help='{MutualFriends, Matchmaking}', default=None)
 
 
@@ -58,6 +59,9 @@ def generate_scenario(schema):
     alphas = schema.alphas
     random_attributes = args.random_attributes
     scenario_attributes = schema.attributes
+    # NEW:
+    styles = schema.styles
+
     if random_attributes:
         # sample random number and set of attributes, and choose alphas for each attribute
         num_attributes = min(np.random.choice(xrange(args.min_attributes, args.max_attributes)), len(schema.attributes))
@@ -148,16 +152,20 @@ def generate_scenario(schema):
 
     # Create the scenario
     kbs = [KB(scenario_attributes, items) for items in agent_items]
-    scenario = Scenario(generate_uuid('S'), scenario_attributes, kbs, [alphas[attr] for attr in scenario_attributes])
-    return scenario
+    scenarios = []
+    for style in styles:
+        scenario = Scenario(generate_uuid('S'), scenario_attributes, kbs, style, [alphas[attr] for attr in scenario_attributes])
+        scenarios.append(scenario)
+    return scenarios
 
 # Generate scenarios
 schema = Schema(args.schema_path, args.domain)
 scenario_list = []
-while len(scenario_list) < args.num_scenarios:
-    s = generate_scenario(schema)
-    if s is not None:
-        scenario_list.append(s)
+while len(scenario_list) < args.num_scenarios * args.num_styles:
+    s_list = generate_scenario(schema)
+    for s in s_list:
+        if s is not None:
+            scenario_list.append(s)
 
 scenario_db = ScenarioDB(scenario_list)
 write_json(scenario_db.to_dict(), args.scenarios_path)

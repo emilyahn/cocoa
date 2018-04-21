@@ -40,7 +40,7 @@ def add_website_arguments(parser):
                         default="web_output/{}".format(datetime.now().strftime("%Y-%m-%d-%H-%M-%S")),
                         help='Name of directory for storing website output (debug and error logs, chats, '
                              'and database). Defaults to a web_output/current_date, with the current date formatted as '
-                             '%%Y-%%m-%%d. '
+                             '%%Y-%%m-%%d-%H-%M-%S. '
                              'If the provided directory exists, all data in it is overwritten.')
     parser.add_argument('--domain', type=str,
                         choices=['MutualFriends', 'Matchmaking'])
