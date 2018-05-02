@@ -769,10 +769,25 @@ class BackendConnection(object):
                 cursor = self.conn.cursor()
                 user_info = self._get_user_info_unchecked(cursor, userid)
                 _update_scenario_db(user_info.chat_id, user_info.partner_type)
-                cursor.execute('INSERT INTO survey VALUES (?,?,?,?,?,?,?,?)',
+                cursor.execute('INSERT INTO survey VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                                (userid, user_info.chat_id, user_info.partner_type,
-                                data['fluent'], data['correct'], data['cooperative'],
-                                data['humanlike'], data['comments']))
+                                data['n01_i_understand'],
+                                data['n02_cooperative'],
+                                data['n03_human'],
+                                data['n04_understand_me'],
+                                data['n05_chat'],
+                                data['n06_texts'],
+                                data['n07_tech'],
+                                data['n08_learn_spa'],
+                                data['n09_learn_eng'],
+                                data['n10_age'],
+                                data['n11_ability_spa'],
+                                data['n12_ability_eng'],
+                                data['n13_country'],
+                                data['n14_online_spa'],
+                                data['n15_online_eng'],
+                                data['n16_online_mix'],
+                                data['n17_comments']))
                 _user_finished(userid)
         except sqlite3.IntegrityError:
             print("WARNING: Rolled back transaction")

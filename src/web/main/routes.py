@@ -313,11 +313,22 @@ def index():
                                quit_after=app.config['user_params']['status_params']['chat']['num_seconds'] - app.config['user_params']['quit_after'])
     elif status == Status.Survey:
         survey_info = backend.get_survey_info(userid())
-        return render_template('task_survey.html',
+        return render_template('survey_emily.html',
                                title=app.config['task_title'],
                                uid=userid(),
                                icon=app.config['task_icon'],
                                message=survey_info.message)
+
+
+@main.route('/surveytest', methods=['GET'])
+def survey_test():
+    # backend = get_backend()
+    # survey_info = backend.get_survey_info(userid())
+    return render_template('survey_emily.html',
+                           title=app.config['task_title'],
+                           uid=userid(),
+                           icon=app.config['task_icon'],
+                           message='survey_info.message')
 
 
 @main.route('/visualize', methods=['GET', 'POST'])

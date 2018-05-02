@@ -3,7 +3,8 @@
 <head lang="en">
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="../static/survey.css">
-    <title>Who's Our Mutual Friend?</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap4.min.css')}}">
+    <title>{{ title }}</title>
 </head>
 
 <!-- JS for maneuvering text -->
@@ -57,22 +58,22 @@
             	response = {"uid": "{{ uid }}", "response": questionAnswers};
                 console.log(questionAnswers);
                 $.ajax({
-                    url: "/_submit_survey/",
-                    type: "POST",
-                    data: JSON.stringify(response),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(data){
-                        //alert("SUCCESS");
-                        console.log(JSON.stringify(data));
-                        disconnect();
-                        window.location.reload(true);
-                    },
-                    failure: function(){
-                        console.log(":(");
-                    }
+                url: "/_submit_survey/",
+                type: "POST",
+                data: JSON.stringify(response),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data){
+                    //alert("SUCCESS");
+                    console.log(JSON.stringify(data));
+                    disconnect();
+                    window.location.reload(true);
+                },
+                failure: function(){
+                    console.log(":(");
+                }
                 })
-            } else{
+            }else{
                 alert("You have not selected an answer for every question. Please do so before submitting the HIT.");
             }
 

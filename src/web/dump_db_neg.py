@@ -16,6 +16,7 @@ from src.basic.util import read_json, write_json
 from src.web.db_reader_neg import DatabaseReader
 # from core.scenario import Scenario
 
+
 def read_results_csv(csv_file):
     '''
     Return a dict from mturk_code to worker_id.
@@ -32,6 +33,7 @@ def read_results_csv(csv_file):
         d[code] = workerid
     return d
 
+
 def chat_to_worker_id(cursor, code_to_wid):
     '''
     chat_id: {'0': workder_id, '1': worker_id}
@@ -43,7 +45,7 @@ def chat_to_worker_id(cursor, code_to_wid):
         agent_wid = {}
         agent_uids = eval(agent_uids)
         for agent_id, agent_uid in agent_uids.iteritems():
-            if not (isinstance(agent_uid, basestring)): #and agent_uid.startswith('U_')):
+            if not (isinstance(agent_uid, basestring)):  # and agent_uid.startswith('U_')):
                 agent_wid[agent_id] = None
             else:
                 cursor.execute('''SELECT mturk_code FROM mturk_task WHERE name=?''', (agent_uid,))
@@ -57,6 +59,7 @@ def chat_to_worker_id(cursor, code_to_wid):
         d[chat_id] = agent_wid
     return d
 
+
 def log_worker_id_to_json(db_path, batch_results):
     '''
     {chat_id: {'0': worker_id; '1': worker_id}}
@@ -68,9 +71,10 @@ def log_worker_id_to_json(db_path, batch_results):
     output_dir = os.path.dirname(batch_results)
     write_json(worker_ids, output_dir + '/worker_ids.json')
 
-# moidfied method from original file: dump_events_to_json.py
+
+# @eahn1: modified method from original file: dump_events_to_json.py
 def log_surveys_to_json(cursor, surveys_file):
-    questions = ['fluent', 'correct', 'cooperative', 'humanlike', 'comments']
+    questions = ['n01_i_understand', 'n02_cooperative', 'n03_human', 'n04_understand_me', 'n05_chat', 'n06_texts', 'n07_tech', 'n08_learn_spa', 'n09_learn_eng', 'n10_age', 'n11_ability_spa', 'n12_ability_eng', 'n13_country', 'n14_online_spa', 'n15_online_eng', 'n16_online_mix', 'n17_comments']
     # conn = sqlite3.connect(db_path)
     # cursor = conn.cursor()
     cursor.execute('''SELECT * FROM survey''')
@@ -80,8 +84,8 @@ def log_surveys_to_json(cursor, surveys_file):
 
     for survey in logged_surveys:
         # print survey
-        (userid, cid, _, fluent, correct, cooperative, humanlike, comments) = survey
-        responses = dict(zip(questions, [fluent, correct, cooperative, humanlike, comments]))
+        (userid, cid, _, n01_i_understand, n02_cooperative, n03_human, n04_understand_me, n05_chat, n06_texts, n07_tech, n08_learn_spa, n09_learn_eng, n10_age, n11_ability_spa, n12_ability_eng, n13_country, n14_online_spa, n15_online_eng, n16_online_mix, n17_comments) = survey
+        responses = dict(zip(questions, [n01_i_understand, n02_cooperative, n03_human, n04_understand_me, n05_chat, n06_texts, n07_tech, n08_learn_spa, n09_learn_eng, n10_age, n11_ability_spa, n12_ability_eng, n13_country, n14_online_spa, n15_online_eng, n16_online_mix, n17_comments]))
         cursor.execute('''SELECT agent_types, agent_ids FROM chat WHERE chat_id=?''', (cid,))
         chat_result = cursor.fetchone()
         agents = json.loads(chat_result[0])

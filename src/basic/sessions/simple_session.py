@@ -162,7 +162,7 @@ class SimpleSession(Session):
             return to_flip + ' ' + no_change
 
         # style_type = self.style
-        style_type = 'en2sp'
+        style_type = 'en_lex'
         if style_type == 'en_lex':
             new_str = en_lex()
         elif style_type == 'sp_lex':
