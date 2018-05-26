@@ -220,9 +220,9 @@ def home():
                            icon=app.config['task_icon'])
 
 
-@main.route('/screening', methods=['GET'])
+@main.route('/consent', methods=['GET'])
 def screen():
-    return render_template('screening.html')
+    return render_template('consent.html')
 
 
 @main.route('/index', methods=['GET', 'POST'])
@@ -240,7 +240,9 @@ def index():
 
     logger.info("Got updated status %s for user %s" % (status, userid()[:6]))
 
-    mturk = True if request.args.get('mturk') and int(request.args.get('mturk')) == 1 else None
+    # mturk = True if request.args.get('mturk') and int(request.args.get('mturk')) == 1 else None
+    # make system always give mturk_code, without specifying in url
+    mturk = True
     if status == Status.Waiting:
         logger.info("Getting waiting information for user %s" % userid()[:6])
         waiting_info = backend.get_waiting_info(userid())
@@ -322,8 +324,6 @@ def index():
 
 @main.route('/surveytest', methods=['GET'])
 def survey_test():
-    # backend = get_backend()
-    # survey_info = backend.get_survey_info(userid())
     return render_template('survey_emily.html',
                            title=app.config['task_title'],
                            uid=userid(),

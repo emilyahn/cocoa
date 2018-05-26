@@ -2,6 +2,7 @@
     <head>
         <title>{{title}}</title>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap4.min.css')}}">
         <style>
     		#timer{
     		color: #000;
@@ -69,20 +70,17 @@
         </script>
     </head>
     <body>
-    <div id="content">
+    <div id="content" class="py-3 px-3">
         <div>
              <div style="float:left; margin: 0px 20px 0px 10px;">
                 <img height="120" width="120" src="{{ url_for('static', filename='img/')}}{{icon}}"/>
             </div>
             <div style="float:left">
-                <h2>{{title}}</h2>
                 <h2>{{title_span}}</h2>
                 <h3>{% autoescape false %}{{ waiting_message | replace("|", "<br/>") }}{% endautoescape %}</h3>
 
                 <!-- <h4>Make sure you have read the instructions carefully, as the task is timed and the clock will start immediately once you are paired. </h4> -->
-                <h4>Make sure you have read the instructions carefully, as the task is timed and the clock will start immediately once you are paired.
-                <br>
-                <i>Asegúrese de haber leído las instrucciones con cuidado porque la tarea está cronometrada y el reloj va empezar inmediatamente después que estés emparejado.</i></h4>
+                <h4>Asegúrese de haber leído las instrucciones con cuidado porque la tarea está cronometrada y el reloj va empezar inmediatamente después que estés emparejado</h4>
             </div>
         </div>
     </div>

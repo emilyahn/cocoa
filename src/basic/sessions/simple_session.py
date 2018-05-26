@@ -11,6 +11,8 @@ import numpy as np
 from itertools import izip
 from google.cloud import translate
 
+# NOTE: Currently rigged to process sp_lex ONLY!
+
 # Instantiates a client
 translate_client = translate.Client()
 
@@ -162,13 +164,14 @@ class SimpleSession(Session):
             return to_flip + ' ' + no_change
 
         # style_type = self.style
-        style_type = 'en_lex'
+        # style_type = 'en_lex'
+        style_type = 'sp_lex'
         if style_type == 'en_lex':
             new_str = en_lex()
         elif style_type == 'sp_lex':
             new_str = sp_lex()
-        elif style_type == 'en2sp':
-            new_str = en2sp()
+        # elif style_type == 'en2sp':
+        #     new_str = en2sp()
 
         # new_str = new_str.replace(' .','.').replace(' ?','?')
         print '*'*20

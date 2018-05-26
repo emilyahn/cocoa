@@ -1,7 +1,8 @@
 <html>
-    <head>
-    	<title>{{ title }}</title>
-    	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+	<head>
+		<title>{{ title }}</title>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap4.min.css')}}">
 		<style>
 			.clearfix {
 				overflow: auto;
@@ -93,21 +94,21 @@
 			var messageTime = 0.0;
 			$(document).ready(function(){
 				$.ajax({
-            		url: BASE_URL +'/_connect/',
-            		type: "get",
-            		data: {"uid": "{{ uid }}" },
-            		dataType: "json"
-            	});
+					url: BASE_URL +'/_connect/',
+					type: "get",
+					data: {"uid": "{{ uid }}" },
+					dataType: "json"
+				});
 
-            	$.ajax({
-            		url: BASE_URL + '/_join_chat/',
-            		type: "get",
-            		data: {"uid": "{{ uid }}"},
-            		dataType: "json",
-            		success: function(response) {
-            			displayText(response['message']);
-            		}
-            	});
+				$.ajax({
+					url: BASE_URL + '/_join_chat/',
+					type: "get",
+					data: {"uid": "{{ uid }}"},
+					dataType: "json",
+					success: function(response) {
+						displayText(response['message']);
+					}
+				});
 
 				inboxCheckInterval = setInterval(checkInbox, 1000);
 				validCheckInterval = setInterval(pollServer, 3000);
@@ -149,6 +150,7 @@
 
 			function displayText(message) {
 				$('#chat').val($('#chat').val() + message + '\n');
+				// $('#chat').val($('#chat').val() + '{% autoescape false %}{{ message | replace("|", "<br/>") }}{% endautoescape %}' + '\n');
 				$('#chat').scrollTop($('#chat')[0].scrollHeight);
 			}
 
@@ -213,27 +215,27 @@
 			}
 
 			function disconnect() {
-            	clearInterval(validCheckInterval);
-            	clearInterval(inboxCheckInterval);
-            	$.ajax({
-            		url: BASE_URL + '/_leave_chat/',
-            		type: "get",
-            		data: {"uid": "{{ uid }}"}
-            	});
-            	$.ajax({
-            		url: BASE_URL + '/_disconnect/',
-            		type: "get",
-            		data: {"uid": "{{ uid }}" }
-            	});
-            }
+				clearInterval(validCheckInterval);
+				clearInterval(inboxCheckInterval);
+				$.ajax({
+					url: BASE_URL + '/_leave_chat/',
+					type: "get",
+					data: {"uid": "{{ uid }}"}
+				});
+				$.ajax({
+					url: BASE_URL + '/_disconnect/',
+					type: "get",
+					data: {"uid": "{{ uid }}" }
+				});
+			}
 
 
-            function skipChat() {
-	            disconnect();
-            	$.ajax({
-            		url: BASE_URL + '/_skip_chat/',
-            		type: "get",
-            		data: {"uid": "{{ uid }}"}
+			function skipChat() {
+				disconnect();
+				$.ajax({
+					url: BASE_URL + '/_skip_chat/',
+					type: "get",
+					data: {"uid": "{{ uid }}"}
 				});
 				window.location.reload(true);
 			}
@@ -281,50 +283,45 @@
 				initializeClock('clockdiv', deadline);
 			}
 		</script>
-    </head>
+	</head>
 
-    <body onload='init()' oncopy="return false" oncut="return false" onpaste="return false">
-      <div class="clearfix">
-    <div id="chat_container">
-    <div id="instructions">
-        <h1 style="color:#004d00">{{ title}}</h1>
-        {{ instructions }}
+	<body onload='init()' oncopy="return false" oncut="return false" onpaste="return false">
+	  <div class="clearfix">
+	  	<h1 style="color:#004d00" class="py-2 px-2">{{ title_span }}</h1>
+	  	<div class="row">
+	  		<div class="col">
+	<div id="container" class="py-2 px-2">
+	<div id="instructions">
+		{{ instructions_span }}
 	</div>
 
-        <div id="clockdiv" align="right">
+		<div id="clockdiv" align="right">
 	  Time / Tiempo:
-	  <div>
-	    <span class="minutes"></span>
-	    <span class="seconds"></span>
+	  <div style="color:red">
+		<span class="minutes"></span>
+		<span class="seconds"></span>
 	  </div>
 	</div>
 
-        <textarea readonly id="chat"></textarea><br><br>
-        <input id="text" placeholder="Enter your message here"><br><br>
+		<textarea readonly id="chat"></textarea><br><br>
+		<input id="text" placeholder="Enter your message here"><br><br>
 
-    </div>
+	</div>
+</div>
+<div class="col">
 
-    <div id="info_container">
-    	<div id="topright">
-    		<div id="instructions">
-		        <h1 style="color:#004d00">{{ title_span }}</h1>
-		        {{ instructions_span }}
-			</div>
-			<!-- <div id="icon">
-				<img height="120" width="120" src="{{ url_for('static', filename='img/')}}{{icon}}"/>
-			</div> -->
+	<div id="container" class="py-2 px-2">
 			<div style="display:none; color:#FF0000;" id="leave">
 			<h4><a href="javascript:skipChat();">Click here</a> to quit this chat.</h4>
 			</div>
-		</div>
 		<div id="friends">
-            <h3>Your friends / Tus amigos</h3>
+			<h3>Tus amigos / Your friends</h3>
 			<table class="sortable">
 			<thead>
 			<tr>
 			<th><b>#</b></th>
 			{% for attr in attributes %}
-			<th align="center">{{ attr }}<br/>{{ attributes_span[loop.index - 1] }}</th>
+			<th align="center">{{ attributes_span[loop.index - 1] }}<br/>{{ attr }}</th>
 			{% endfor %}
 			</tr>
 			</thead>
@@ -334,16 +331,16 @@
 				<tr>
 					<td><a href="javascript:void(0)" onclick="makeSelection({{ item_idx }})"><b>Select</b></a></td>
 					{% for attr in attributes %}
-					<td align="center">{{item[attr]}}{% if attr != 'Name' %}<br/>{{kb_span[item_idx][attributes_span[loop.index - 1]]}}{% endif %}</td>
+					<td align="center">{{kb_span[item_idx][attributes_span[loop.index - 1]]}}{% if attr != 'Name' %}<br/>{{item[attr]}}{% endif %}</td>
 					{% endfor %}
 				</tr>
 				{% endfor %}
 			</tbody>
 			</table>
-        </div>
-        {% if partner_kb %}
-        <div id="peek">
-            <h3>Partner's friends</h3>
+		</div>
+		{% if partner_kb %}
+		<div id="peek">
+			<h3>Partner's friends</h3>
 			<table class="sortable">
 			<thead>
 			<tr>
@@ -364,10 +361,12 @@
 				{% endfor %}
 			</tbody>
 			</table>
-        </div>
-        {% endif %}
+		</div>
+		{% endif %}
 
-    </div>
-    </div>
-    </body>
+	</div>
+</div>
+</div>
+	</div>
+	</body>
 </html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head><style>table{ table-layout: fixed; width: 600px; border-collapse: collapse; } tr:nth-child(n) { border: solid thin;}</style></head><body>
+<style>
+* {
+font-size: 1em;
+font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+#filter td {
+padding: 0 20px 5px 0;
+}
+.scenario {
+width: 100%;
+display: inline-block;
+text-align: left;
+}
+.scenario table {
+border-collapse: collapse;
+text-align: left;
+}
+.survey {
+width: 100%;
+}
+.survey table {
+border-collapse: collapse;
+}
+.survey table td, .scenario table td {
+padding: 0 5px;
+}
+.survey .response {
+padding: 0 0 20px 0;
+}
+.agentLabel {
+padding: 10px;
+}
+.scenario td, .scenario th, .survey td, .survey th {
+border-bottom: 1px solid #ddd;
+padding: 0 5px 0 0;
+}
+.divTitle {
+padding: 20px 0px 10px 0px;
+font-weight: bold;
+}
+.kb0 {
+width: 48%;
+float: left;
+}
+.kb1 {
+width: 48%;
+margin-left: 4%;
+float: left;
+}
+.chatLog .chat {
+width: 100%;
+border-collapse: collapse;
+}
+.kb0 th {
+background-color: #80ced6;
+}
+.chatLog .agent0 {
+background-color: #80ced6;
+}
+.survey .response0 th {
+background-color: #80ced6;
+}
+.kb1 th {
+background-color: #ffef96;
+}
+.chatLog .agent1 {
+background-color: #ffef96;
+}
+.survey .response1 th {
+background-color: #ffef96;
+}
+</style>
+<h3>Total number of chats: 2</h3>
+<h3>Number of chats completed: 2</h3>
+<hr>
+<div class="scenario">
+<div class="divTitle">Scenario S_e0XjhpAZHjxrvpao</div>
+<div class="kb0"><table><tr><td colspan="3" class="agentLabel">Agent 0</td></tr>
+<th>Major (0.3)</th>
+<th>Hobby (3.0)</th>
+<th>Works at (3.0)</th>
+</tr>
+<tr>
+<td>education</td>
+<td>reading</td>
+<td>the factory</td>
+</tr>
+<tr>
+<td>managment</td>
+<td>guitar</td>
+<td>the theater</td>
+</tr>
+<tr>
+<td>education</td>
+<td>baking</td>
+<td>the jewelry store</td>
+</tr>
+<tr>
+<td>business</td>
+<td>violin</td>
+<td>the cafe</td>
+</tr>
+<tr>
+<td>pharmacy</td>
+<td>fishing</td>
+<td>home</td>
+</tr>
+<tr>
+<td>managment</td>
+<td>sleeping</td>
+<td>the jewelry store</td>
+</tr>
+<tr>
+<td>biology</td>
+<td>swimming</td>
+<td>the theater</td>
+</tr>
+<tr>
+<td>urban planning</td>
+<td>sports</td>
+<td>the car dealership</td>
+</tr>
+<tr>
+<td>linguistics</td>
+<td>gardening</td>
+<td>the jewelry store</td>
+</tr>
+<tr>
+<td>physics</td>
+<td>piano</td>
+<td>the courthouse</td>
+</tr>
+</table></div>
+<div class="kb1"><table><tr><td colspan="3" class="agentLabel">Agent 1</td></tr>
+<th>Major (0.3)</th>
+<th>Hobby (3.0)</th>
+<th>Works at (3.0)</th>
+</tr>
+<tr>
+<td>law</td>
+<td>swimming</td>
+<td>the dance studio</td>
+</tr>
+<tr>
+<td>biology</td>
+<td>swimming</td>
+<td>the theater</td>
+</tr>
+<tr>
+<td>biology</td>
+<td>baking</td>
+<td>the courthouse</td>
+</tr>
+<tr>
+<td>physics</td>
+<td>violin</td>
+<td>home</td>
+</tr>
+<tr>
+<td>biology</td>
+<td>sports</td>
+<td>the cafe</td>
+</tr>
+<tr>
+<td>engineering</td>
+<td>astronomy</td>
+<td>the clinic</td>
+</tr>
+<tr>
+<td>education</td>
+<td>fishing</td>
+<td>the hair salon</td>
+</tr>
+<tr>
+<td>physics</td>
+<td>running</td>
+<td>the cafe</td>
+</tr>
+<tr>
+<td>law</td>
+<td>camping</td>
+<td>school</td>
+</tr>
+<tr>
+<td>physics</td>
+<td>reading</td>
+<td>the park</td>
+</tr>
+</table></div>
+</div>
+<div class="chatLog">
+<div class="divTitle"> Chat Log </div>
+<table class="chat">
+<tr class="agent0">                <td class="time">2018-05-22 12:15:05</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">hola</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 12:15:13</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">hola</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 12:15:26</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">¿Tiene algún friend trabajando en the courthouse o un friend que trabaje en the cafe ?</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 12:15:36</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">SELECT (running || physics || the cafe)</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 12:15:51</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">¿Tienes algún friend que trabaje en home o friends que trabajen en the jewelry store ?</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 12:16:11</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">no</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 12:16:28</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">Tengo dos friends que estudiaron managment, un friend que trabaja en el concesionario de automóviles</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 12:17:09</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">SELECT (violin || physics || home)</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 12:17:21</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">Tengo un friend al que le gusta swimming y trabajar en el theater</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 12:17:26</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">SELECT (swimming || biology || the theater)</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 12:17:28</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">SELECT (swimming || biology || the theater)</td>               </tr>
+</table>
+</div>
+<div class="survey">
+<div class="divTitle">Survey</div>
+<div class="response">
+<table class="response1">
+<tr><td colspan="2" class="agentLabel">Response to agent 1 (human)</td></tr>
+<tr><th>Question</th><th>Response</th></tr>
+</table>
+</div>
+<div class="response">
+<table class="response0">
+<tr><td colspan="2" class="agentLabel">Response to agent 0 (rule-based)</td></tr>
+<tr><th>Question</th><th>Response</th></tr>
+<tr><td>n01_i_understand</td><td>2</td></tr>
+<tr><td>n02_cooperative</td><td>4</td></tr>
+<tr><td>n03_human</td><td>4</td></tr>
+<tr><td>n04_understand_me</td><td>4</td></tr>
+<tr><td>n05_chat</td><td>2</td></tr>
+<tr><td>n06_texts</td><td>4</td></tr>
+<tr><td>n07_tech</td><td>4</td></tr>
+<tr><td>n08_learn_spa</td><td>2</td></tr>
+<tr><td>n09_learn_eng</td><td>1</td></tr>
+<tr><td>n10_age</td><td>35</td></tr>
+<tr><td>n11_ability_spa</td><td>4</td></tr>
+<tr><td>n12_ability_eng</td><td>5</td></tr>
+<tr><td>n13_country</td><td>united states</td></tr>
+<tr><td>n14_online_spa</td><td>2</td></tr>
+<tr><td>n15_online_eng</td><td>8</td></tr>
+<tr><td>n16_online_mix</td><td>1</td></tr>
+<tr><td>n17_comments</td><td></td></tr>
+</table>
+</div>
+</div>
+</div>
+<hr>
+<div class="scenario">
+<div class="divTitle">Scenario S_sSQdvobc6aqfI5eX</div>
+<div class="kb0"><table><tr><td colspan="3" class="agentLabel">Agent 0</td></tr>
+<th>Name (0.3)</th>
+<th>Hobby (1.0)</th>
+<th>Works at (3.0)</th>
+</tr>
+<tr>
+<td>ana</td>
+<td>piano</td>
+<td>home</td>
+</tr>
+<tr>
+<td>isabel</td>
+<td>baking</td>
+<td>the bank</td>
+</tr>
+<tr>
+<td>isabel</td>
+<td>camping</td>
+<td>the hospital</td>
+</tr>
+<tr>
+<td>sara</td>
+<td>baking</td>
+<td>the jewelry store</td>
+</tr>
+<tr>
+<td>ana</td>
+<td>writing</td>
+<td>the jewelry store</td>
+</tr>
+<tr>
+<td>isabel</td>
+<td>camping</td>
+<td>home</td>
+</tr>
+<tr>
+<td>isabel</td>
+<td>gardening</td>
+<td>the airport</td>
+</tr>
+<tr>
+<td>isabel</td>
+<td>piano</td>
+<td>the clinic</td>
+</tr>
+<tr>
+<td>carlos</td>
+<td>drawing</td>
+<td>the airport</td>
+</tr>
+<tr>
+<td>ana</td>
+<td>camping</td>
+<td>the hospital</td>
+</tr>
+</table></div>
+<div class="kb1"><table><tr><td colspan="3" class="agentLabel">Agent 1</td></tr>
+<th>Name (0.3)</th>
+<th>Hobby (1.0)</th>
+<th>Works at (3.0)</th>
+</tr>
+<tr>
+<td>juan</td>
+<td>astronomy</td>
+<td>the courthouse</td>
+</tr>
+<tr>
+<td>isabel</td>
+<td>puzzles</td>
+<td>the office</td>
+</tr>
+<tr>
+<td>ana</td>
+<td>traveling</td>
+<td>home</td>
+</tr>
+<tr>
+<td>daniel</td>
+<td>acting</td>
+<td>the hospital</td>
+</tr>
+<tr>
+<td>david</td>
+<td>puzzles</td>
+<td>the bank</td>
+</tr>
+<tr>
+<td>ana</td>
+<td>camping</td>
+<td>the hospital</td>
+</tr>
+<tr>
+<td>david</td>
+<td>tennis</td>
+<td>the airport</td>
+</tr>
+<tr>
+<td>ana</td>
+<td>reading</td>
+<td>the hair salon</td>
+</tr>
+<tr>
+<td>david</td>
+<td>puzzles</td>
+<td>the museum</td>
+</tr>
+<tr>
+<td>david</td>
+<td>sewing</td>
+<td>the park</td>
+</tr>
+</table></div>
+</div>
+<div class="chatLog">
+<div class="divTitle"> Chat Log </div>
+<table class="chat">
+<tr class="agent0">                <td class="time">2018-05-22 13:47:05</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">que pasa</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:47:12</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">tengo 2 friends que les gusta baking</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:47:34</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">hola! a mis amigos no le gusta</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:47:40</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">tengo algunos friends llamados Ana</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:47:55</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">yo tengo 2 que se llaman Ana</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:48:03</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">l3</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:48:10</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">tengo algunos friends que les gusta camping</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:48:12</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">Aficiones de Ana?</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:48:18</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">tengo algunos friends llamados Ana</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:48:20</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">SELECT (piano || ana || home)</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:48:36</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">Esa no la tengo</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:48:43</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">¿Tienes friends trabajando en the hospital ?</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:48:57</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">Sí, tengo 2</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:48:59</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">SELECT (writing || ana || the jewelry store)</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:49:11</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">Ana y Daniel</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:49:19</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">¿Tienes algún friend al que le gusta writing ?</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:49:41</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">None</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:49:47</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">tengo 2 friends que les gusta piano</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:49:56</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">Tienes a alguien que le guste la astronomía?</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:49:57</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">yo tengo</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:50:04</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">¿Tienes friends trabajando en home ?</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:50:08</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">Nada de piano</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:50:18</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">tengo 1 amiga llamada sara, algunos friends llamados isabel</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:50:24</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">Sí,tengo a Ana</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:50:34</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">tengo 1 friend al que le gusta drawing, 1 friend al que le gusta writing</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:50:39</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">Yo tengo una Isabel, le gustan los rompecabezas</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:50:49</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">tengo 1 friend trabajando en the clinic, 1 friend llamado carlos</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:51:02</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">No drawing ni writing</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:51:11</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">tengo 1 friend que le gusta la gardening y trabaja en the airport</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:51:15</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">No tengo Carlos</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:51:22</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">¿Tiene algún friend trabajando en the bank ?</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:51:41</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">No tengo combinación de gardening y airport</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:51:48</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">tengo algunos friends que les gusta camping</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:51:49</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">Para bank tengo a David</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:51:56</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">¿Tienes friends trabajando en the hospital ?</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:52:21</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">Yeah, Daniel y Ana trabajan en el hospital</td>               </tr>
+<tr class="agent0">                <td class="time">2018-05-22 13:52:24</td>                <td class="agent">Agent 0 (rule-based)</td>                <td class="message">SELECT (camping || ana || the hospital)</td>               </tr>
+<tr class="agent1">                <td class="time">2018-05-22 13:52:34</td>                <td class="agent">Agent 1 (human)</td>                <td class="message">SELECT (camping || ana || the hospital)</td>               </tr>
+</table>
+</div>
+<div class="survey">
+<div class="divTitle">Survey</div>
+<div class="response">
+<table class="response1">
+<tr><td colspan="2" class="agentLabel">Response to agent 1 (human)</td></tr>
+<tr><th>Question</th><th>Response</th></tr>
+</table>
+</div>
+<div class="response">
+<table class="response0">
+<tr><td colspan="2" class="agentLabel">Response to agent 0 (rule-based)</td></tr>
+<tr><th>Question</th><th>Response</th></tr>
+<tr><td>n01_i_understand</td><td>5</td></tr>
+<tr><td>n02_cooperative</td><td>5</td></tr>
+<tr><td>n03_human</td><td>5</td></tr>
+<tr><td>n04_understand_me</td><td>5</td></tr>
+<tr><td>n05_chat</td><td>5</td></tr>
+<tr><td>n06_texts</td><td>4</td></tr>
+<tr><td>n07_tech</td><td>5</td></tr>
+<tr><td>n08_learn_spa</td><td>2 (native speaker)</td></tr>
+<tr><td>n09_learn_eng</td><td>6</td></tr>
+<tr><td>n10_age</td><td>37</td></tr>
+<tr><td>n11_ability_spa</td><td>5</td></tr>
+<tr><td>n12_ability_eng</td><td>5</td></tr>
+<tr><td>n13_country</td><td>Spain</td></tr>
+<tr><td>n14_online_spa</td><td>2</td></tr>
+<tr><td>n15_online_eng</td><td>7</td></tr>
+<tr><td>n16_online_mix</td><td>1</td></tr>
+<tr><td>n17_comments</td><td>It was really cool. I found curious the lack of capitalization, but I guess that it's OK because it was an informal chat and many humans don't use capitalization in chats</td></tr>
+</table>
+</div>
+</div>
+</div>
+<hr>
+</body></html>

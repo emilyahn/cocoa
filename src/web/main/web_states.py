@@ -13,7 +13,8 @@ class WaitingState(object):
         if message and len(message) > 0:
             self.message = message
         else:
-            self.message = "Please wait while we try to find someone to pair you up with..|Por favor espera mientras nosotros intentamos a encontrar una pareja para usted..."
+            # self.message = "Please wait while we try to find someone to pair you up with..|Por favor espera mientras nosotros intentamos a encontrar una pareja para usted..."
+            self.message = "Por favor espera mientras nosotros intentamos a encontrar una pareja para usted..."
         self.num_seconds = num_seconds
 
 

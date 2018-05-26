@@ -60,6 +60,7 @@ def chat_to_worker_id(cursor, code_to_wid):
     return d
 
 
+# @eahn1: modified to have unique outfile json files (prevent rewrite existing)
 def log_worker_id_to_json(db_path, batch_results):
     '''
     {chat_id: {'0': worker_id; '1': worker_id}}
@@ -69,7 +70,9 @@ def log_worker_id_to_json(db_path, batch_results):
     code_to_wid = read_results_csv(batch_results)
     worker_ids = chat_to_worker_id(cursor, code_to_wid)
     output_dir = os.path.dirname(batch_results)
-    write_json(worker_ids, output_dir + '/worker_ids.json')
+    outfile_name = os.path.splitext(os.path.basename(batch_results))[0] + '_worker_ids.json'
+    outfile_path = os.path.join(output_dir, outfile_name)
+    write_json(worker_ids, outfile_path)
 
 
 # @eahn1: modified method from original file: dump_events_to_json.py
