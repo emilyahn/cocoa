@@ -98,7 +98,6 @@ class SimpleSession(Session):
         content_sp['amigo'] = 'friend'
         content_sp['amigos'] = 'friends'
 
-
         return dict([('en', content_en), ('sp', content_sp)])
 
     # 2)
@@ -113,7 +112,7 @@ class SimpleSession(Session):
 
         with open('data/fillers.txt', 'r') as fin:
             for line in fin.readlines():
-                eng, spa, num, gender, formal, tense = line.replace('\n','').decode('utf-8').split('\t')
+                eng, spa, num, gender, formal, tense = line.replace('\n', '').decode('utf-8').split('\t')
                 attrib = ','.join([num, gender, formal])
                 span_attrib = defaultdict(dict)
                 span_attrib[spa]['attrib'] = attrib
@@ -126,26 +125,111 @@ class SimpleSession(Session):
 
     # 3)
     def stylize(self, orig_eng):
-        # en_tokens = orig_eng.split()
+        span_articles = ['la ', 'el ', 'las ', 'los ']
 
         # STYLE 1: EN as matrix, replace SP nouns
+        # ex: "he works at [the airport / el aeropuerto]" -> [the aeropuerto]
         def en_lex():
             new_str = orig_eng
             for en_chunk, sp_chunk in self.biling_dct['en'].iteritems():
-                # if en_chunk in new_str:
-                new_str = new_str.replace(en_chunk, sp_chunk)
+                if en_chunk in new_str:
+                    new_span_noun = ''
+                    if en_chunk.startswith('the '):
+                        new_span_noun = 'the '
+
+                    for span_article in span_articles:
+                        if sp_chunk.startswith(span_article):
+                            sp_chunk = sp_chunk.replace(span_article, '', 1)
+
+                    new_span_noun += sp_chunk
+
+                    new_str = new_str.replace(en_chunk, new_span_noun)
             return new_str
+
+        # helper method for sp_lex -> noun has SPA as article and EN as noun
+        # ex: "trabaja en [the airport / el aeropuerto]" -> [el airport]
+        def get_sp_article_en_noun(sp_noun, eng_noun):
+            new_eng_noun = ''
+            for span_article in span_articles:
+                if sp_noun.startswith(span_article):
+                    new_eng_noun = span_article
+
+            if eng_noun.startswith('the '):
+                eng_noun = eng_noun.replace('the ', '', 1)
+
+            new_eng_noun += eng_noun
+            return new_eng_noun
 
         # STYLE 2: SP as matrix, replace EN nouns
         def sp_lex():
             translation = translate_client.translate(orig_eng, target_language='es')
             orig_spa = translation['translatedText'].replace('.', ' .').replace('?', ' ?')
 
+            # 0. try to convert all initially
+            num_nouns = 0
             new_str = orig_spa
             for sp_chunk, en_chunk in self.biling_dct['sp'].iteritems():
+                sp_regex = re.compile(sp_chunk + r'\W')
+
                 # if sp_chunk in new_str:
-                new_str = new_str.replace(sp_chunk, en_chunk)
-            return new_str
+                if bool(re.search(sp_regex, new_str)):
+                    if not sp_chunk.startswith('amig'):
+                        num_nouns += 1
+                    # import pdb; pdb.set_trace()
+                    new_eng_noun = get_sp_article_en_noun(sp_chunk, en_chunk)
+                    new_str = new_str.replace(sp_chunk, new_eng_noun)
+            # because Google may give alternate translations of our lexicon...
+            # 1. get the proper SPA nouns in our lexicon
+            sp_nouns_in_lex = []  # hope that this length is same nouns foudn in translation
+            temp_sp_nouns_in_lex = []
+            for en_chunk, sp_chunk in self.biling_dct['en'].iteritems():
+                # must find en_chunk in correct order of appearance
+                if en_chunk in orig_eng:
+                    # FIXED: adds "amigo/s" when it shouldn't
+                    if sp_chunk.startswith('amig'):
+                        continue
+
+                    location = orig_eng.find(en_chunk)  # int
+                    temp_sp_nouns_in_lex.append((location, sp_chunk))
+
+            sp_nouns_in_lex = [words for loc, words in sorted(temp_sp_nouns_in_lex)]
+
+            # import pdb; pdb.set_trace()
+            if len(sp_nouns_in_lex) == num_nouns:
+                print '======== ALL GOOD ========'
+                return new_str
+
+            print '+++++++++ not all nouns converted properly +++++++++'
+            print 'GOOGLE TRANSLATE:', orig_spa
+
+            # 2. replace Google translate's SPA nouns with our SPA nouns
+            sp_with_delim = re.sub(r'( [oy] )', r'@\1', new_str)
+            sp_with_delim = re.sub(r'(, )', r'@\1', sp_with_delim)
+            sp_clauses_orig = sp_with_delim.split('@')
+
+            # hopefully this if statement will never catch...
+            if len(sp_clauses_orig) != len(sp_nouns_in_lex):
+                # how to fix? add extra words to sp_nouns_in_lex
+                sp_nouns_in_lex.extend(['algo', 'algo', 'algo'])
+
+            new_sp_clauses = []
+            regexes = [r'(trabaj\w+ en) .*', r'(estudi\w+) .*', r'(gust\w+) .*']
+            for i, sp_clause in enumerate(sp_clauses_orig):
+                for regex in regexes:
+                    if bool(re.search(regex, sp_clause)):
+
+                        new_clause = re.sub(regex, r'\1 ', sp_clause)
+                        sp_noun = sp_nouns_in_lex[i]
+                        eng_noun = self.biling_dct['sp'][sp_noun]
+
+                        new_eng_noun = get_sp_article_en_noun(sp_noun, eng_noun)
+                        new_clause += new_eng_noun
+
+                        if '?' in sp_clause:
+                            new_clause += '?'
+                        new_sp_clauses.append(new_clause)
+
+            return ''.join(new_sp_clauses)
 
         # STYLE 3: begin in ENG, switch to SPA after mention of "friend/s"
         def en2sp():
@@ -163,9 +247,13 @@ class SimpleSession(Session):
 
             return to_flip + ' ' + no_change
 
-        # style_type = self.style
+        # READ FROM SCENARIO
+        style_type = self.style
+
+        # MANUALLY FIX
         # style_type = 'en_lex'
-        style_type = 'sp_lex'
+        # style_type = 'sp_lex'
+
         if style_type == 'en_lex':
             new_str = en_lex()
         elif style_type == 'sp_lex':
@@ -178,6 +266,7 @@ class SimpleSession(Session):
         print 'NEW STR', new_str
         print '*'*20
         return new_str.encode('utf-8')
+
 
     def get_entity_coords(self):
         '''

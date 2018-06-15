@@ -24,7 +24,7 @@ def add_visualization_arguments(parser):
 
 #questions = ['fluent', 'fluent_text', 'correct', 'correct_text', 'cooperative', 'cooperative_text', 'strategic', 'strategic_text', 'humanlike', 'humanlike_text', 'comments']
 # QUESTIONS = ['fluent', 'correct', 'cooperative', 'humanlike']
-QUESTIONS = ['n01_i_understand', 'n02_cooperative', 'n03_human', 'n04_understand_me', 'n05_chat', 'n06_texts', 'n07_tech', 'n08_learn_spa', 'n09_learn_eng', 'n10_age', 'n11_ability_spa', 'n12_ability_eng', 'n13_country', 'n14_online_spa', 'n15_online_eng', 'n16_online_mix', 'n17_comments']
+QUESTIONS = ['n00_gender', 'n01_i_understand', 'n02_cooperative', 'n03_human', 'n04_understand_me', 'n05_chat', 'n06_texts', 'n07_tech', 'n08_learn_spa', 'n09_learn_eng', 'n10_age', 'n11_ability_spa', 'n12_ability_eng', 'n13_country', 'n14_online_spa', 'n15_online_eng', 'n16_online_mix', 'n17_comments']
 TEXT_ONLY = ['n08_learn_spa', 'n09_learn_eng', 'n10_age', 'n13_country', 'n17_comments']
 
 # Canonical names to be displayed

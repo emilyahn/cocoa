@@ -56,7 +56,7 @@ def init_database(db_file):
     )
     c.execute('''CREATE TABLE mturk_task (name text, mturk_code text, chat_id text)''')
     c.execute(
-        '''CREATE TABLE survey (name text, chat_id text, partner_type text, n01_i_understand integer, n02_cooperative integer, n03_human integer, n04_understand_me integer, n05_chat integer, n06_texts integer, n07_tech integer, n08_learn_spa integer, n09_learn_eng integer, n10_age integer, n11_ability_spa integer, n12_ability_eng integer, n13_country integer, n14_online_spa integer, n15_online_eng integer, n16_online_mix integer, n17_comments text)''')
+        '''CREATE TABLE survey (name text, chat_id text, partner_type text, n00_gender text, n01_i_understand integer, n02_cooperative integer, n03_human integer, n04_understand_me integer, n05_chat integer, n06_texts integer, n07_tech integer, n08_learn_spa integer, n09_learn_eng integer, n10_age integer, n11_ability_spa integer, n12_ability_eng integer, n13_country integer, n14_online_spa integer, n15_online_eng integer, n16_online_mix integer, n17_comments text)''')
     c.execute(
         '''CREATE TABLE event (chat_id text, action text, agent integer, time text, data text, start_time text)'''
     )

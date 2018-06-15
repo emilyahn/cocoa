@@ -1,7 +1,7 @@
 # script to process mturk results
 
 # 0) check params
-out_name=full_pilot_splex_0524
+out_name=more_full_pilot_splex_0524
 time_stamp=2018-05-22-02-25-07
 chat_db=turk/${out_name}.db
 scenarios=data/scenarios_0519_10items.json

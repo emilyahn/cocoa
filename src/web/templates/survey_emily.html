@@ -29,6 +29,7 @@
 		questionAnswers["n09_learn_eng"] = $('#n09_learn_eng').val();
 		questionAnswers["n10_age"] = $('#n10_age').val();
 
+		questionAnswers["n00_gender"] = $('input[name=n00_gender]:checked').val();
 		questionAnswers["n11_ability_spa"] = $('input[name=n11_ability_spa]:checked').val();
 		questionAnswers["n12_ability_eng"] = $('input[name=n12_ability_eng]:checked').val();
 
@@ -330,7 +331,24 @@
 			<br>
 			<br>
 
-			<h6 class="ml-2">11.  Rate your overall <strong>Spanish</strong> ability on a scale from 1-5.</h6>
+			<h6 class="ml-2">11.  What is your gender?</h6>
+
+			<div class="custom-control custom-radio ml-5">
+				<input type="radio" class="custom-control-input" id="n00_gender_f" name="n00_gender" value="f" required>
+				<label class="custom-control-label" for="n00_gender_f">Female</label>
+			</div>
+			<div class="custom-control custom-radio ml-5">
+				<input type="radio" class="custom-control-input" id="n00_gender_m" name="n00_gender" value="m" required>
+				<label class="custom-control-label" for="n00_gender_m">Male</label>
+			</div>
+			<div class="custom-control custom-radio ml-5">
+				<input type="radio" class="custom-control-input" id="n00_gender_o" name="n00_gender" value="o" required>
+				<label class="custom-control-label" for="n00_gender_o">Prefer not to say</label>
+			</div>
+			<br>
+			<br>
+
+			<h6 class="ml-2">12.  Rate your overall <strong>Spanish</strong> ability on a scale from 1-5.</h6>
 
 			<div class="custom-control custom-radio ml-5">
 				<input type="radio" class="custom-control-input" id="n11_ability_spa1" name="n11_ability_spa" value="1" required>
@@ -355,7 +373,7 @@
 			<br>
 			<br>
 
-			<h6 class="ml-2">12.  Rate your overall <strong>English</strong> ability on a scale from 1-5.</h6>
+			<h6 class="ml-2">13.  Rate your overall <strong>English</strong> ability on a scale from 1-5.</h6>
 			<!-- <form class="was-validated"> -->
 			<div class="custom-control custom-radio ml-5">
 				<input type="radio" class="custom-control-input" id="n12_ability_eng1" name="n12_ability_eng" value="1" required>
@@ -380,7 +398,7 @@
 			<br>
 			<br>
 
-			<h6 class="ml-2 mb-3">13.  Which country/countries do you or your family originate from?</h6>
+			<h6 class="ml-2 mb-3">14.  Which country/countries do you or your family originate from?</h6>
 
 			<div class="ml-5">
 				<input class="form-control" id="n13_country" type="text" placeholder="e.g. Mexico, Peru" required>
@@ -388,7 +406,7 @@
 			<br>
 			<br>
 
-			<h6 class="ml-2 mb-3">14.  What percentage of the time do you write online (i.e. text, social media, etc.) in <strong>Spanish</strong>?</h6>
+			<h6 class="ml-2 mb-3">15.  What percentage of the time do you write online (i.e. text, social media, etc.) in <strong>Spanish</strong>?</h6>
 
 			<div class="form-group  ml-5">
 				<select class="custom-select" id="n14_online_spa" required>
@@ -409,7 +427,7 @@
 			<br>
 			<br>
 
-			<h6 class="ml-2 mb-3">15.  What percentage of the time do you write online (i.e. text, social media, etc.) in <strong>English</strong>?</h6>
+			<h6 class="ml-2 mb-3">16.  What percentage of the time do you write online (i.e. text, social media, etc.) in <strong>English</strong>?</h6>
 
 			<div class="form-group  ml-5">
 				<select class="custom-select" id="n15_online_eng" required>
@@ -430,7 +448,7 @@
 			<br>
 			<br>
 
-			<h6 class="ml-2 mb-3">16.  What percentage of the time do you write online (i.e. text, social media, etc.) in <strong>Spanglish</strong>?</h6>
+			<h6 class="ml-2 mb-3">17.  What percentage of the time do you write online (i.e. text, social media, etc.) in <strong>Spanglish</strong>?</h6>
 
 			<div class="form-group  ml-5">
 				<select class="custom-select" id="n16_online_mix" required>

@@ -77,7 +77,7 @@ def log_worker_id_to_json(db_path, batch_results):
 
 # @eahn1: modified method from original file: dump_events_to_json.py
 def log_surveys_to_json(cursor, surveys_file):
-    questions = ['n01_i_understand', 'n02_cooperative', 'n03_human', 'n04_understand_me', 'n05_chat', 'n06_texts', 'n07_tech', 'n08_learn_spa', 'n09_learn_eng', 'n10_age', 'n11_ability_spa', 'n12_ability_eng', 'n13_country', 'n14_online_spa', 'n15_online_eng', 'n16_online_mix', 'n17_comments']
+    questions = ['n00_gender', 'n01_i_understand', 'n02_cooperative', 'n03_human', 'n04_understand_me', 'n05_chat', 'n06_texts', 'n07_tech', 'n08_learn_spa', 'n09_learn_eng', 'n10_age', 'n11_ability_spa', 'n12_ability_eng', 'n13_country', 'n14_online_spa', 'n15_online_eng', 'n16_online_mix', 'n17_comments']
     # conn = sqlite3.connect(db_path)
     # cursor = conn.cursor()
     cursor.execute('''SELECT * FROM survey''')
@@ -87,8 +87,8 @@ def log_surveys_to_json(cursor, surveys_file):
 
     for survey in logged_surveys:
         # print survey
-        (userid, cid, _, n01_i_understand, n02_cooperative, n03_human, n04_understand_me, n05_chat, n06_texts, n07_tech, n08_learn_spa, n09_learn_eng, n10_age, n11_ability_spa, n12_ability_eng, n13_country, n14_online_spa, n15_online_eng, n16_online_mix, n17_comments) = survey
-        responses = dict(zip(questions, [n01_i_understand, n02_cooperative, n03_human, n04_understand_me, n05_chat, n06_texts, n07_tech, n08_learn_spa, n09_learn_eng, n10_age, n11_ability_spa, n12_ability_eng, n13_country, n14_online_spa, n15_online_eng, n16_online_mix, n17_comments]))
+        (userid, cid, _, n00_gender, n01_i_understand, n02_cooperative, n03_human, n04_understand_me, n05_chat, n06_texts, n07_tech, n08_learn_spa, n09_learn_eng, n10_age, n11_ability_spa, n12_ability_eng, n13_country, n14_online_spa, n15_online_eng, n16_online_mix, n17_comments) = survey
+        responses = dict(zip(questions, [n00_gender, n01_i_understand, n02_cooperative, n03_human, n04_understand_me, n05_chat, n06_texts, n07_tech, n08_learn_spa, n09_learn_eng, n10_age, n11_ability_spa, n12_ability_eng, n13_country, n14_online_spa, n15_online_eng, n16_online_mix, n17_comments]))
         cursor.execute('''SELECT agent_types, agent_ids FROM chat WHERE chat_id=?''', (cid,))
         chat_result = cursor.fetchone()
         agents = json.loads(chat_result[0])

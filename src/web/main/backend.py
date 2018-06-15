@@ -769,8 +769,9 @@ class BackendConnection(object):
                 cursor = self.conn.cursor()
                 user_info = self._get_user_info_unchecked(cursor, userid)
                 _update_scenario_db(user_info.chat_id, user_info.partner_type)
-                cursor.execute('INSERT INTO survey VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                cursor.execute('INSERT INTO survey VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                                (userid, user_info.chat_id, user_info.partner_type,
+                                data['n00_gender'],
                                 data['n01_i_understand'],
                                 data['n02_cooperative'],
                                 data['n03_human'],
