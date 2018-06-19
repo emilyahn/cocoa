@@ -160,32 +160,19 @@ class SimpleSession(Session):
             new_eng_noun += eng_noun
             return new_eng_noun
 
-        # STYLE 2: SP as matrix, replace EN nouns
-        def sp_lex():
+        # helper method
+        def translate_to_sp_correctly():
+            # orig_eng = 'I have 1 friend who likes afternoon and who studied accounting'
             translation = translate_client.translate(orig_eng, target_language='es')
             orig_spa = translation['translatedText'].replace('.', ' .').replace('?', ' ?')
+            # orig_spa = u'Tengo 1 amigo que le gusta la tarde y que estudió contabilidad'
 
-            # 0. try to convert all initially
-            num_nouns = 0
-            new_str = orig_spa
-            for sp_chunk, en_chunk in self.biling_dct['sp'].iteritems():
-                sp_regex = re.compile(sp_chunk + r'\W')
-
-                # if sp_chunk in new_str:
-                if bool(re.search(sp_regex, new_str)):
-                    if not sp_chunk.startswith('amig'):
-                        num_nouns += 1
-                    # import pdb; pdb.set_trace()
-                    new_eng_noun = get_sp_article_en_noun(sp_chunk, en_chunk)
-                    new_str = new_str.replace(sp_chunk, new_eng_noun)
-            # because Google may give alternate translations of our lexicon...
             # 1. get the proper SPA nouns in our lexicon
-            sp_nouns_in_lex = []  # hope that this length is same nouns foudn in translation
+            sp_nouns_in_lex = []  # hope that this length is same nouns found in translation
             temp_sp_nouns_in_lex = []
             for en_chunk, sp_chunk in self.biling_dct['en'].iteritems():
                 # must find en_chunk in correct order of appearance
                 if en_chunk in orig_eng:
-                    # FIXED: adds "amigo/s" when it shouldn't
                     if sp_chunk.startswith('amig'):
                         continue
 
@@ -194,36 +181,46 @@ class SimpleSession(Session):
 
             sp_nouns_in_lex = [words for loc, words in sorted(temp_sp_nouns_in_lex)]
 
-            # import pdb; pdb.set_trace()
+            # how many proper SP nouns are in Google's translation?
+            num_nouns = 0
+            new_str = orig_spa
+            for sp_chunk, en_chunk in self.biling_dct['sp'].iteritems():
+                sp_regex = re.compile(sp_chunk + r'\W')
+
+                if bool(re.search(sp_regex, new_str)):
+                    if not sp_chunk.startswith('amig'):
+                        num_nouns += 1
+                    # new_eng_noun = get_sp_article_en_noun(sp_chunk, en_chunk)
+                    # new_str = new_str.replace(sp_chunk, new_eng_noun)
+
             if len(sp_nouns_in_lex) == num_nouns:
                 print '======== ALL GOOD ========'
                 return new_str
 
-            print '+++++++++ not all nouns converted properly +++++++++'
-            print 'GOOGLE TRANSLATE:', orig_spa
+            print '>>>>>>>> fixing <<<<<<<<'
 
             # 2. replace Google translate's SPA nouns with our SPA nouns
+            # first: split into clauses
             sp_with_delim = re.sub(r'( [oy] )', r'@\1', new_str)
             sp_with_delim = re.sub(r'(, )', r'@\1', sp_with_delim)
             sp_clauses_orig = sp_with_delim.split('@')
 
             # hopefully this if statement will never catch...
             if len(sp_clauses_orig) != len(sp_nouns_in_lex):
-                # how to fix? add extra words to sp_nouns_in_lex
+                # add extra words to sp_nouns_in_lex
                 sp_nouns_in_lex.extend(['algo', 'algo', 'algo'])
 
             new_sp_clauses = []
-            regexes = [r'(trabaj\w+ en) .*', r'(estudi\w+) .*', r'(gust\w+) .*']
+            # regexes = [r'(trabaj\w+ en) .*', r'(estudi\w+) .*', r'(gust\w+) .*']
+            regexes = [r'(trabaj\w+ en) .*', r'(estudi[^ ]+) .*', r'(gust\w+) .*']
             for i, sp_clause in enumerate(sp_clauses_orig):
                 for regex in regexes:
-                    if bool(re.search(regex, sp_clause)):
+                    if bool(re.search(regex, sp_clause, re.UNICODE)):
 
                         new_clause = re.sub(regex, r'\1 ', sp_clause)
-                        sp_noun = sp_nouns_in_lex[i]
-                        eng_noun = self.biling_dct['sp'][sp_noun]
 
-                        new_eng_noun = get_sp_article_en_noun(sp_noun, eng_noun)
-                        new_clause += new_eng_noun
+                        # import pdb; pdb.set_trace()
+                        new_clause += sp_nouns_in_lex[i]
 
                         if '?' in sp_clause:
                             new_clause += '?'
@@ -231,21 +228,75 @@ class SimpleSession(Session):
 
             return ''.join(new_sp_clauses)
 
-        # STYLE 3: begin in ENG, switch to SPA after mention of "friend/s"
-        def en2sp():
-            translation = translate_client.translate(orig_eng, target_language='es')
-            orig_spa = translation['translatedText'].replace('.', ' .').replace('?', ' ?')
-            orig_spa = re.sub(r'(amigo\w*)', r'\1 #', orig_spa)
-            orig_spa_tokens = orig_spa.split()
-            idx_split = orig_spa_tokens.index('#')
-            to_flip = ' '.join(orig_spa_tokens[:idx_split])
-            no_change = ' '.join(orig_spa_tokens[idx_split + 1:])
-            for spa_word, vals in self.phrase_table['sp'].iteritems():
-                if spa_word in to_flip:
-                    import pdb; pdb.set_trace()
-                    to_flip = to_flip.replace(spa_word, vals['eng'])
+        # STYLE 2: SP as matrix, replace EN nouns
+        def sp_lex():
+            new_str = translate_to_sp_correctly()
+            for sp_chunk, en_chunk in self.biling_dct['sp'].iteritems():
+                # sp_regex = re.compile(sp_chunk + r'\W')
+                sp_regex = re.compile(sp_chunk + r'($|\?| |,)')
 
-            return to_flip + ' ' + no_change
+                if bool(re.search(sp_regex, new_str)):
+                    # import pdb; pdb.set_trace()
+                    new_eng_noun = get_sp_article_en_noun(sp_chunk, en_chunk)
+                    new_str = new_str.replace(sp_chunk, new_eng_noun)
+
+            return new_str
+
+        # STYLE 3: begin in ENG, switch to SPA
+        # if only 1 clause, switch after mention of "friend/s"
+        # if 2+ clauses, make 2nd+ clause SPA
+        def structure_style(style_type):
+            orig_spa = translate_to_sp_correctly()
+
+            num_nouns = 0
+            for en_chunk, sp_chunk in self.biling_dct['en'].iteritems():
+                # must find en_chunk in correct order of appearance
+                if en_chunk in orig_eng:
+                    if not sp_chunk.startswith('amig'):
+                        num_nouns += 1
+
+            # only 1 clause. switch after mention of "friend/s"
+            if num_nouns == 1:
+                if style_type == 'en2sp':
+                    second_spa = re.sub(r'.*amigo\w* ', r'', orig_spa)
+                    first_eng = re.sub(r'(.*friend\w*).*', r'\1', orig_eng)
+                    return first_eng + ' ' + second_spa
+
+                else:
+                    # handle sp2en
+                    first_spa = re.sub(r'(.*amigo\w*).*', r'\1', orig_spa)
+                    second_eng = re.sub(r'.*friend\w* ', r'', orig_eng)
+                    return first_spa + ' ' + second_eng
+
+            # 2+ clauses. make 2nd+ clause SPA
+            # first: split into clauses
+            sp_with_delim = re.sub(r'( [oy] )', r'@\1', orig_spa)
+            sp_with_delim = re.sub(r'(, )', r'@\1', sp_with_delim)
+            sp_clauses_orig = sp_with_delim.split('@')
+
+            en_with_delim = re.sub(r'( or )', r'@\1', orig_eng)
+            en_with_delim = re.sub(r'( and )', r'@\1', en_with_delim)
+            en_with_delim = re.sub(r'(, )', r'@\1', en_with_delim)
+            en_clauses_orig = en_with_delim.split('@')
+
+            if len(sp_clauses_orig) != len(en_clauses_orig):
+                # should never be true, but in case, just be safe and return first lang only
+                # import pdb; pdb.set_trace()
+                if style_type == 'en2sp':
+                    return orig_eng
+                return orig_spa
+
+            if style_type == 'en2sp':
+                first_clause, second_clauses = [en_clauses_orig[0]], sp_clauses_orig[1:]
+            else:
+                first_clause, second_clauses = [sp_clauses_orig[0]], en_clauses_orig[1:]
+
+            # COMBINE!!!!
+            # import pdb; pdb.set_trace()
+            final = first_clause + second_clauses
+            final = ''.join(final)
+            return final
+
 
         # READ FROM SCENARIO
         style_type = self.style
@@ -253,13 +304,15 @@ class SimpleSession(Session):
         # MANUALLY FIX
         # style_type = 'en_lex'
         # style_type = 'sp_lex'
+        # style_type = 'en2sp'
+        # style_type = 'sp2en'
 
         if style_type == 'en_lex':
             new_str = en_lex()
         elif style_type == 'sp_lex':
             new_str = sp_lex()
-        # elif style_type == 'en2sp':
-        #     new_str = en2sp()
+        elif '2' in style_type:
+            new_str = structure_style(style_type)
 
         # new_str = new_str.replace(' .','.').replace(' ?','?')
         print '*'*20

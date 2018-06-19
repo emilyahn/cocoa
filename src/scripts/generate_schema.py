@@ -57,7 +57,8 @@ if __name__ == '__main__':
     time_pref = scrape('data/time.txt')
 
     # style options!! crux of this research!
-    styles = ['en_lex', 'sp_lex']
+    # styles = ['en_lex', 'sp_lex']
+    styles = ['en2sp', 'sp2en']
     print '%d styles' % len(styles)
 
     # Schema
