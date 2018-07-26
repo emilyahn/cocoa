@@ -10,6 +10,7 @@ from src.basic.lexicon import Lexicon
 import numpy as np
 from itertools import izip
 from google.cloud import translate
+import csv
 
 # NOTE: Currently rigged to process sp_lex ONLY!
 
@@ -29,7 +30,7 @@ class SimpleSession(Session):
 
     # greetings = ['hi', 'hello', 'hey', 'hiya']
     # TODO: read in as list, in case we change it up more later
-    greetings = ['hola', 'que pasa']  # 'oye'
+    greetings = ['hola', 'que pasa', 'que tal']  # 'oye'
 
     def __init__(self, agent, kb, lexicon, style, realizer=None, consecutive_entity=True):
         super(SimpleSession, self).__init__(agent)
@@ -63,6 +64,12 @@ class SimpleSession(Session):
         self.said_hi = False
         self.matched_item = None
         self.selected = False
+        # eahn:
+        # SOCIAL STYLE
+        self.is_answer = False
+        self.ask_question = False
+        self.neg_response = False
+        self.is_social = False #True
 
         self.capitalize = random.choice([True, False])
         self.numerical = random.choice([True, False])
@@ -70,6 +77,7 @@ class SimpleSession(Session):
         # new
         self.biling_dct = self.get_biling_dict()
         self.phrase_table = self.get_phrase_table()
+        self.discourse_dct = self.read_discourse_tsv()
         # print self.biling_dct.keys()
 
     # new methods
@@ -124,7 +132,24 @@ class SimpleSession(Session):
         return dict([('en', content_en), ('sp', content_sp)])
 
     # 3)
+    def read_discourse_tsv(self):
+        discourse_words = defaultdict(list)
+        tsv_filename = 'data/discourse.tsv'
+        reader = csv.DictReader(open(tsv_filename, 'r'), delimiter='\t')
+        for row in reader:
+            for word_group in reader.fieldnames:  # iterate thru keys (header)
+                if row[word_group]:
+                    filler = row[word_group]
+                    # remove potential '_spa' or '_eng' at end of filler.
+                    #TODO: process eng or spa later
+                    filler = filler.split('_')[0]
+                    discourse_words[word_group].append(filler)
+
+        return discourse_words
+
+    # 4)
     def stylize(self, orig_eng):
+        # orig_eng = 'I have no friend working at the dance studio'
         span_articles = ['la ', 'el ', 'las ', 'los ']
 
         # STYLE 1: EN as matrix, replace SP nouns
@@ -181,18 +206,27 @@ class SimpleSession(Session):
 
             sp_nouns_in_lex = [words for loc, words in sorted(temp_sp_nouns_in_lex)]
 
+            # import pdb; pdb.set_trace()
             # how many proper SP nouns are in Google's translation?
             num_nouns = 0
             new_str = orig_spa
+            print 'NEW_STR', new_str
             for sp_chunk, en_chunk in self.biling_dct['sp'].iteritems():
-                sp_regex = re.compile(sp_chunk + r'\W')
+
+                # if sp_chunk == u'el estudio de baile':
+                    # import pdb; pdb.set_trace()
+                    # foo = 4
+
+                # sp_regex = re.compile(sp_chunk + r'\W')
+                sp_regex = re.compile(sp_chunk + r'\b')
 
                 if bool(re.search(sp_regex, new_str)):
+                    # print 'HURRAH'
                     if not sp_chunk.startswith('amig'):
                         num_nouns += 1
                     # new_eng_noun = get_sp_article_en_noun(sp_chunk, en_chunk)
                     # new_str = new_str.replace(sp_chunk, new_eng_noun)
-
+            # import pdb; pdb.set_trace()
             if len(sp_nouns_in_lex) == num_nouns:
                 print '======== ALL GOOD ========'
                 return new_str
@@ -218,8 +252,6 @@ class SimpleSession(Session):
                     if bool(re.search(regex, sp_clause, re.UNICODE)):
 
                         new_clause = re.sub(regex, r'\1 ', sp_clause)
-
-                        # import pdb; pdb.set_trace()
                         new_clause += sp_nouns_in_lex[i]
 
                         if '?' in sp_clause:
@@ -245,6 +277,7 @@ class SimpleSession(Session):
         # STYLE 3: begin in ENG, switch to SPA
         # if only 1 clause, switch after mention of "friend/s"
         # if 2+ clauses, make 2nd+ clause SPA
+        #TODO: remove param style_type ??
         def structure_style(style_type):
             orig_spa = translate_to_sp_correctly()
 
@@ -264,6 +297,7 @@ class SimpleSession(Session):
 
                 else:
                     # handle sp2en
+                    # import pdb; pdb.set_trace()
                     first_spa = re.sub(r'(.*amigo\w*).*', r'\1', orig_spa)
                     second_eng = re.sub(r'.*friend\w* ', r'', orig_eng)
                     return first_spa + ' ' + second_eng
@@ -297,7 +331,6 @@ class SimpleSession(Session):
             final = ''.join(final)
             return final
 
-
         # READ FROM SCENARIO
         style_type = self.style
 
@@ -312,14 +345,57 @@ class SimpleSession(Session):
         elif style_type == 'sp_lex':
             new_str = sp_lex()
         elif '2' in style_type:
+            #TODO: remove style_type param
             new_str = structure_style(style_type)
+
+        # SOCIAL STYLE:
+        if self.is_social:
+            add_filler_threshold = 0.8  # 0.5
+            if np.random.random() < add_filler_threshold:
+                if self.ask_question:
+                    begin_filler = np.random.choice(self.discourse_dct['ques_begin']).decode('utf-8')
+                    new_str = new_str.replace('¿'.decode('utf-8'), '').lower()
+                    new_str = '{} {}'.format(begin_filler.encode('utf-8'), new_str.encode('utf-8'))
+
+                elif self.is_answer:
+                    new_str = new_str.lower().encode('utf-8')
+                    if self.neg_response:
+                        begin_filler = np.random.choice(self.discourse_dct['neg_begin']).decode('utf-8')
+                    else:
+                        begin_filler = np.random.choice(self.discourse_dct['pos_begin']).decode('utf-8')
+
+                    new_str = '{} {}'.format(begin_filler.encode('utf-8'), new_str)
+
+                    # add ending punctuation
+                    if np.random.random() < add_filler_threshold:
+                        # so far only 1 each in dict entries, so no need for random choosing...
+                        end_punct = np.random.choice(self.discourse_dct['pos_end']).decode('utf-8')
+                        if self.neg_response:
+                            end_punct = np.random.choice(self.discourse_dct['neg_end']).decode('utf-8')
+                        new_str = new_str.rstrip() + end_punct
+
+                else:  # is inform
+                    new_str = new_str.lower().encode('utf-8')
+                    if np.random.random() < 0.5:
+                        begin_filler = np.random.choice(self.discourse_dct['inform_begin']).decode('utf-8')
+                        new_str = '{} {}'.format(begin_filler.encode('utf-8'), new_str)
+                    else:
+                        end_filler = np.random.choice(self.discourse_dct['inform_end']).decode('utf-8')
+                        new_str = '{}{}'.format(new_str, end_filler.encode('utf-8'))
+
+            # turn off switches
+            self.ask_question = False
+            self.is_answer = False
+            self.neg_response = False
 
         # new_str = new_str.replace(' .','.').replace(' ?','?')
         print '*'*20
         print 'NEW STR', new_str
         print '*'*20
-        return new_str.encode('utf-8')
-
+        try:
+            return new_str.encode('utf-8')
+        except UnicodeDecodeError:
+            return new_str
 
     def get_entity_coords(self):
         '''
@@ -408,6 +484,10 @@ class SimpleSession(Session):
         fact_str = []
         total = num_items
         for entities, count in fact:
+            # add negation
+            if count == 0:
+                self.neg_response = True
+
             # Add caninical form as surface form
             entities = [(x[0], x) for x in entities]
             if self.realizer:
@@ -450,10 +530,14 @@ class SimpleSession(Session):
         if count == 0:
             return 'no'
         elif count == 1:
+            if self.is_social:
+                return 'one'
             return '1'
         elif count == total:
             return 'all'
         elif count == 2:
+            if self.is_social:
+                return 'two'
             return '2'
         elif count > 2./3. * total:
             return 'many'
@@ -474,7 +558,7 @@ class SimpleSession(Session):
         # make prefix True to give longer, grammatical sentences
         fact_str = self.fact_to_str(facts, self.num_items, prefix=True)
         # message = self.naturalize('i have %s .' % fact_str)
-        message = self.naturalize('i have %s' % fact_str) # remove period @ sent end
+        message = self.naturalize('i have %s' % fact_str)  # remove period @ sent end
         print '*'*20, 'inform'
         print 'BEFORE', message
         message = self.stylize(message) # ADDED
@@ -487,11 +571,13 @@ class SimpleSession(Session):
         message = self.naturalize('do you have any %s ?' % fact_str)
         print '*'*20, 'ask'
         print 'BEFORE', message
+        self.ask_question = True
         message = self.stylize(message) # ADDED
         print 'AFTER', message
         return self.message(message)
 
-    def answer(self, entities): #TODO: HANDLE RECEIVING
+    def answer(self, entities):
+        self.is_answer = True
         fact = self.entity_to_fact(entities)
         return self.inform(fact)
 

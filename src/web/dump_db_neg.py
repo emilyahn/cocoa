@@ -56,6 +56,7 @@ def chat_to_worker_id(cursor, code_to_wid):
                         continue
                     else:
                         agent_wid[agent_id] = code_to_wid[mturk_code]
+                        agent_wid["mturk_code"] = mturk_code
         d[chat_id] = agent_wid
     return d
 

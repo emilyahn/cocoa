@@ -220,9 +220,10 @@ def visualize_chat(chat, agent=None, partner_type='Human', responses=None, id_=N
     if responses:
         dialogue_id = chat['uuid']
         agents = chat['agents']
-        # import pdb; pdb.set_trace()
-        response_html = render_response(responses[dialogue_id], agents)
-        html_lines.extend(response_html)
+        # allow for possibility of chat without completing survey
+        if dialogue_id in responses:
+            response_html = render_response(responses[dialogue_id], agents)
+            html_lines.extend(response_html)
 
     return completed, html_lines
 

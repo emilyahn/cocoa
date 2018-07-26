@@ -1,6 +1,7 @@
 import json
 # import sys
 import langid
+import cld2
 
 
 # returns only what human said from complete json chat file
@@ -14,7 +15,8 @@ def read_human_from_json(infile):
 		if chat['agents']['0'] == 'bot':
 			idx = 1
 		for event in chat['events']:
-			if not event['action'] == 'message': continue # e.g. action == 'select'
+			if not event['action'] == 'message':
+				continue  # e.g. action == 'select'
 			msg = event['data']
 			agent = event['agent']
 			if agent == idx:
@@ -30,3 +32,16 @@ read_human_from_json(chat_file)
 # langid.classify("tengo un amigo") -> 'it' (BAD!!!!)
 # langid.classify("tengo") -> 'en' (BAD)
 # langid.classify("quien eres tu") -> 'es' (GOOD. can handle wrong accents)
+
+# CLD2
+
+# isReliable, textBytesFound, details = cld2.detect("This is my sample text")
+# print('  reliable: %s' % (isReliable != 0))
+# print('  textBytes: %s' % textBytesFound)
+# print('  details: %s' % str(details))
+
+# The output looks like so:
+#  reliable: True
+#  textBytes: 24
+#  details: (('ENGLISH', 'en', 95, 1736.0), ('Unknown', 'un', 0, 0.0), ('Unknown', 'un', 0, 0.0))
+

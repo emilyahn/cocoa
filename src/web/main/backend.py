@@ -1,6 +1,5 @@
 import json
 
-__author__ = 'anushabala'
 import uuid
 from src.web.main.web_states import FinishedState, UserChatState, WaitingState, SurveyState
 from src.basic.systems.human_system import HumanSystem
@@ -301,7 +300,8 @@ class BackendConnection(object):
 
         def _choose_scenario_and_partner_type(cursor):
             # for each scenario, get number of complete dialogues per agent type
-            all_partners = self.systems.keys()
+            non_human_partners = [k for k in self.systems.keys() if k != HumanSystem.name()]
+            print 'NON HUMAN PARTNERS!!', non_human_partners
             cursor.execute('''SELECT * FROM scenario''')
             db_scenarios = cursor.fetchall()
             scenario_dialogues = defaultdict(lambda: defaultdict(int))
@@ -315,20 +315,27 @@ class BackendConnection(object):
             # find "active" scenarios (scenarios for which at least one agent type has no completed or active dialogues)
             active_scenarios = defaultdict(list)
             for sid in scenario_dialogues.keys():
-                for partner_type in all_partners:
+                for partner_type in non_human_partners:
                     if scenario_dialogues[sid][partner_type] == 0:
                         active_scenarios[sid].append(partner_type)
+
+            # import pdb; pdb.set_trace()
+            print '*'*20
+            print 'active_scenarios', active_scenarios
+            print 'scenario_dialogues', scenario_dialogues
 
             # if all scenarios have at least one dialogue per agent type (i.e. no active scenarios),
             # just select a random scenario and agent type
             if len(active_scenarios.keys()) == 0:
                 sid = np.random.choice(scenario_dialogues.keys())
-                p = np.random.choice(all_partners)
+                p = np.random.choice(non_human_partners)
+                print 'PARTNER', p
                 return self.scenario_db.get(sid), p
 
             # otherwise, select a random active scenario and an agent type that it's missing
             sid = np.random.choice(active_scenarios.keys())
             p = np.random.choice(active_scenarios[sid])
+            print 'PARTNER', p
             return self.scenario_db.get(sid), p
 
         def _update_used_scenarios(scenario_id, partner_type):
@@ -348,6 +355,8 @@ class BackendConnection(object):
                 scenario_id = scenario.uuid
                 chat_id = self._generate_chat_id()
                 if partner_type == HumanSystem.name():
+                    print "others" * 20
+                    print "others", others
                     if len(others) == 0:
                         return None
                     partner_id = np.random.choice(others)

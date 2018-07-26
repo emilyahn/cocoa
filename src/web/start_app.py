@@ -103,7 +103,7 @@ def add_systems(config_dict, schema, lexicon, realizer):
     for (sys_name, info) in config_dict.iteritems():
         if "active" not in info.keys():
             warnings.warn("active status not specified for bot %s - assuming that bot is inactive." % sys_name)
-        if info["active"]:
+        if info["active"]:  # TODO Verify this
             type = info["type"]
             if type == SimpleSystem.name():
                 model = SimpleSystem(lexicon, timed_session=True, realizer=realizer, consecutive_entity=False)

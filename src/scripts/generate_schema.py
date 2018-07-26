@@ -58,7 +58,8 @@ if __name__ == '__main__':
 
     # style options!! crux of this research!
     # styles = ['en_lex', 'sp_lex']
-    styles = ['en2sp', 'sp2en']
+    # styles = ['en2sp', 'sp2en']
+    styles = ['en2sp', 'sp2en', 'en_lex', 'sp_lex']
     print '%d styles' % len(styles)
 
     # Schema

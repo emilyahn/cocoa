@@ -40,13 +40,8 @@ created:
 added param of style to scenarios. Num of scenarios in json = (--num-scenarios * num_styles) -- styles determined by list in `src/scripts/generate_schema.py`
 
 ### 20 May
-```sh
-chat_db=turk/chat_state.db
-out_name=pilot0
-scenarios=data/scenarios_0519_10items.json
-schema=data/schema_0519.json
-# handle mturk codes, verify workers
-PYTHONPATH=. python src/web/dump_db_neg.py --db $chat_db --output turk/${out_name}_chat.json  --schema-path $schema --scenarios-path $scenarios --surveys turk/${out_name}_surv.json --batch-results turk/Batch_3239361_batch_results.csv
-# visualize data
-PYTHONPATH=. python src/scripts/visualize_data.py --scenarios-path $scenarios --schema-path $schema --transcripts turk/${out_name}_chat.json --html-output turk/${out_name}.html --survey_file turk/${out_name}_surv.json
-```
+execute `./mturk_process.sh`
+
+### 20 July
+add social
+`PYTHONPATH=. python src/scripts/generate_scenarios.py --schema-path data/schema_0720_social.json --scenarios-path data/scenarios_0720_social_20.json --num-scenarios 10 --random-attributes --random-items --alphas 0.3 1 3 --min-items 10 --max-items 10 --num-styles 4`
