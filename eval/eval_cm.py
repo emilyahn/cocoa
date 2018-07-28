@@ -2,7 +2,16 @@ import json
 from collections import defaultdict
 import unidecode
 import spacy
+from argparse import ArgumentParser
 
+
+""" Script to process cocoa chat in JSON
+	Note: We strip all accents from user's chat.
+		Useful for matching lexicon, may hurt LID performance.
+	Example use from top dir:
+	python eval/eval_cm.py --chat_file turk/amt_soc1_0724/0720_social_chat.json
+		--lid_outfile eval/auto_social_spdef.tsv
+"""
 
 nlp_en = spacy.load('en')
 
@@ -40,26 +49,26 @@ def scrape_chat_json(chat_filename):
 	return full_dict
 
 
-def setup_manual_lid_tagging(chatdict, outfile):
+def auto_lid_tagging(chatdict, outfile):
 	content_en = set()
 	content_sp = set()
-	with open('data/en_dict.txt', 'r') as fin:
+	with open('cocoa/data/en_dict.txt', 'r') as fin:
 		for line in fin.readlines():
 			eng = line.strip().decode('utf-8')
 			content_en.add(eng)
 
-	with open('data/en_common_1k.txt', 'r') as fin:
+	with open('cocoa/data/en_common_1k.txt', 'r') as fin:
 		for line in fin.readlines():
 			eng = line.strip().decode('utf-8')
 			content_en.add(eng)
 
-	with open('data/sp_dict.txt', 'r') as fin:
+	with open('cocoa/data/sp_dict.txt', 'r') as fin:
 		for line in fin.readlines():
 			spa = line.strip().decode('utf-8')
 			spa = unidecode.unidecode(spa)
 			content_sp.add(spa)
 
-	with open('data/sp_common_1k.txt', 'r') as fin:
+	with open('cocoa/data/sp_common_1k.txt', 'r') as fin:
 		for line in fin.readlines():
 			spa = line.strip().decode('utf-8')
 			spa = unidecode.unidecode(spa)
@@ -75,15 +84,15 @@ def setup_manual_lid_tagging(chatdict, outfile):
 					spa_word = unidecode.unidecode(spa_word)
 					content_sp.add(spa_word)
 
-	# add_to_biling_dict('data/names.txt')
-	add_to_biling_dict('data/hobbies.txt')
-	add_to_biling_dict('data/loc.txt')
-	add_to_biling_dict('data/time.txt')
-	add_to_biling_dict('data/majors.txt')
+	# add_to_biling_dict('cocoa/data/names.txt')
+	add_to_biling_dict('cocoa/data/hobbies.txt')
+	add_to_biling_dict('cocoa/data/loc.txt')
+	add_to_biling_dict('cocoa/data/time.txt')
+	add_to_biling_dict('cocoa/data/majors.txt')
 	# DONE adding lexicon items
 
 	out_list = []
-	hyp_counts= [0, 0, 0]
+	hyp_counts = [0, 0, 0]
 	for chat_id in chatdict:
 		for utt_i, utt in enumerate(chatdict[chat_id]['text']):
 			doc_en = nlp_en(utt)
@@ -102,7 +111,12 @@ def setup_manual_lid_tagging(chatdict, outfile):
 					hypothesis_01 = 1
 
 				# import pdb; pdb.set_trace()
-				out_list.append('\t'.join([chat_id, str(utt_i), word, str(hypothesis_01)]))
+				out_list.append(
+					'\t'.join([
+						chatdict[chat_id]['style'], chat_id,
+						str(utt_i), word, str(hypothesis_01)
+					])
+				)
 				hyp_counts[hypothesis_01] += 1
 
 	print hyp_counts
@@ -111,21 +125,24 @@ def setup_manual_lid_tagging(chatdict, outfile):
 		for line in out_list:
 			w.write(line + '\n')
 
-chat_file_struct = "turk/19struct_0621_chat.json"
-# outfile = "eval/manual_19struct_spdef.tsv"
-chat_file_cont = "turk/18content_0615_chat.json"
-# outfile = "eval/manual_18content_spdef.tsv"
-chat_file_social = "turk/0720_social_chat.json"
-outfile = "eval/auto_social_spdef.tsv"
 
-# chat_dict_struct = scrape_chat_json(chat_file_struct)
-# chat_dict_cont = scrape_chat_json(chat_file_cont)
-chat_dict_social = scrape_chat_json(chat_file_social)
-setup_manual_lid_tagging(chat_dict_social, outfile)
+def main():
+	parser = ArgumentParser('eval cocoa data')
+	parser.add_argument(
+		'--chat_file', type=str, required=True,
+		help='Infile path to the chat json')
+	parser.add_argument(
+		'--lid_outfile', type=str, default=None,
+		help='Outfile path. TSV of tokens w/ auto-generated LID tags')
+	args = parser.parse_args()
 
-# for chat_id in chat_dict_social:
-# 	print '{}\t{}'.format(chat_id, chat_dict_social[chat_id]['style'])
-# for chat_id in chat_dict_cont:
-# 	print '{}\t{}'.format(chat_id, chat_dict_cont[chat_id]['style'])
-# for chat_id in chat_dict_struct:
-# 	print '{}\t{}'.format(chat_id, chat_dict_struct[chat_id]['style'])
+	# import pdb; pdb.set_trace()
+	chat_dict = scrape_chat_json(args.chat_file)
+	if args.lid_outfile is not None:
+		auto_lid_tagging(chat_dict, args.lid_outfile)
+
+	# for chat_id in chat_dict:
+	# 	print '{}\t{}'.format(chat_id, chat_dict[chat_id]['style'])
+
+if __name__ == '__main__':
+	main()

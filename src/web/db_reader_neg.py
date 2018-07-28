@@ -167,9 +167,10 @@ class DatabaseReader(object):
             ids = cursor.fetchall()
         else:
             ids = []
-            uids = [(x,) for x in uids]
+            # uids = [(x,) for x in uids]
             for uid in uids:
-                cursor.execute('SELECT chat_id FROM mturk_task WHERE name=?', uid)
+                # cursor.execute('SELECT chat_id FROM mturk_task WHERE name=?', uid)
+                cursor.execute('SELECT chat_id FROM mturk_task WHERE name=?', (uid,))
                 ids_ = cursor.fetchall()
                 ids.extend(ids_)
 

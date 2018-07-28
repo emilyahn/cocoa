@@ -112,6 +112,7 @@ if __name__ == "__main__":
     parser.add_argument('--surveys', type=str, help='If provided, writes a file containing results from user surveys.')
     parser.add_argument('--batch-results', type=str, help='If provided, write a mapping from chat_id to worker_id')
     args = parser.parse_args()
+
     schema = Schema(args.schema_path)
     # scenario_db = ScenarioDB.from_dict(schema, read_json(args.scenarios_path), Scenario)
     scenario_db = ScenarioDB.from_dict(schema, read_json(args.scenarios_path))

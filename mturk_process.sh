@@ -25,4 +25,4 @@ PYTHONPATH=. python src/web/dump_db_neg.py --db $chat_db --output ${out_folder}/
 PYTHONPATH=. python src/scripts/visualize_data.py --scenarios-path $scenarios --schema-path $schema --transcripts ${out_folder}/${out_name}_chat.json --html-output ${out_folder}/${out_name}.html --survey_file ${out_folder}/${out_name}_surv.json
 
 # misc temporary commands
-# PYTHONPATH=. python src/web/dump_db_neg.py --db turk/18content_0615.db --output turk/whatevs_chat.json  --schema-path data/schema_0614.json --scenarios-path data/scenarios_0614.json --surveys turk/whatevs_surv.json --batch-results turk/18content_batch_results.csv
+# PYTHONPATH=. python src/web/dump_db_neg.py --db turk/amt_struct2_0629_buggy/struct_0629.db --output turk/amt_struct2_0629_buggy/struct_0629_trim_chat.json  --schema-path data/schema_0618_struct.json --scenarios-path data/scenarios_0618_struct.json --surveys turk/amt_struct2_0629_buggy/struct_0629_trim_surv.json --batch-results turk/amt_struct2_0629_buggy/struct_0629_batch_fix.csv

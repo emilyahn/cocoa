@@ -45,3 +45,9 @@ execute `./mturk_process.sh`
 ### 20 July
 add social
 `PYTHONPATH=. python src/scripts/generate_scenarios.py --schema-path data/schema_0720_social.json --scenarios-path data/scenarios_0720_social_20.json --num-scenarios 10 --random-attributes --random-items --alphas 0.3 1 3 --min-items 10 --max-items 10 --num-styles 4`
+
+### 27 July
+make social its own explicit style from generate_schema and simple_session
+`python src/scripts/generate_schema.py --schema-path data/schema_0727_all8.json`
+`PYTHONPATH=. python src/scripts/generate_scenarios.py --schema-path data/schema_0727_all8.json --scenarios-path data/scenarios_0727_all8.json --num-scenarios 10 --random-attributes --random-items --alphas 0.3 1 3 --min-items 10 --max-items 10 --num-styles `
+

@@ -30,7 +30,7 @@ class SimpleSession(Session):
 
     # greetings = ['hi', 'hello', 'hey', 'hiya']
     # TODO: read in as list, in case we change it up more later
-    greetings = ['hola', 'que pasa', 'que tal']  # 'oye'
+    greetings = ['hola', 'que pasa', 'que tal']
 
     def __init__(self, agent, kb, lexicon, style, realizer=None, consecutive_entity=True):
         super(SimpleSession, self).__init__(agent)
@@ -40,17 +40,12 @@ class SimpleSession(Session):
         self.lexicon = lexicon
         self.realizer = realizer
         self.consecutive_entity = consecutive_entity
-        self.style = style
         self.num_items = len(kb.items)
         self.entity_coords = self.get_entity_coords()
         # print "ENTITY_COORDS", self.entity_coords
         # print '*'*20
         # print type(kb.items)
         # print len(kb.items)
-        print kb.items
-        print '*'*20
-        print self.style
-        print '*'*20
 
         self.entity_weights = self.weight_entity()
         self.item_weights = [1.] * self.num_items
@@ -69,7 +64,18 @@ class SimpleSession(Session):
         self.is_answer = False
         self.ask_question = False
         self.neg_response = False
-        self.is_social = False #True
+        self.is_social = False  #True
+
+        # STYLE
+        if style.endswith('_soc'):
+            print "++++ SOCIAL ++++"
+            self.is_social = True
+            style = style[:-4]  # remove '_soc'
+        self.style = style
+        # print kb.items
+        print '*'*20
+        print self.style
+        print '*'*20
 
         self.capitalize = random.choice([True, False])
         self.numerical = random.choice([True, False])
