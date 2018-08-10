@@ -1,15 +1,16 @@
 # script to process mturk results
 
 # 0) check params
-out_name=fig8_0_all4 #_nobatch
+out_name=0810_rand #_nobatch
 out_folder=turk/${out_name}
-time_stamp=2018-07-25-15-04-31
+# time_stamp=2018-07-28-20-54-19
+time_stamp=2018-08-10-19-55-47
 chat_db=${out_folder}/${out_name}.db
 # chat_db=turk/struct_0629.db
-scenarios=data/scenarios_0720_social.json
-schema=data/schema_0720_social.json
+scenarios=data/scenarios_0809_random.json
+schema=data/schema_0809_random.json
 
-# batch_file=${out_folder}/struct_0629_batch_fix.csv
+# batch_file="${out_folder}/amt_0810_58.csv ${out_folder}/fig8_0806_100.json ${out_folder}/fig8_0809_100.json "
 # batch_arg="--batch-results $batch_file"
 batch_arg=""
 
@@ -26,3 +27,5 @@ PYTHONPATH=. python src/scripts/visualize_data.py --scenarios-path $scenarios --
 
 # misc temporary commands
 # PYTHONPATH=. python src/web/dump_db_neg.py --db turk/amt_struct2_0629_buggy/struct_0629.db --output turk/amt_struct2_0629_buggy/struct_0629_trim_chat.json  --schema-path data/schema_0618_struct.json --scenarios-path data/scenarios_0618_struct.json --surveys turk/amt_struct2_0629_buggy/struct_0629_trim_surv.json --batch-results turk/amt_struct2_0629_buggy/struct_0629_batch_fix.csv
+
+# PYTHONPATH=. python src/web/dump_db_neg.py --db turk/fig8_0_all4/fig8_0_all4.db --output turk/fig8_0_all4/fig8_0_chat.json  --schema-path data/schema_0720_social.json --scenarios-path data/scenarios_0720_social.json --surveys turk/fig8_0_all4/fig8_0_surv.json --batch-results turk/fig8_0_all4/job_0725.json turk/fig8_0_all4/job_0727.json

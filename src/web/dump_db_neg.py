@@ -34,10 +34,33 @@ def read_results_csv(csv_file):
     return d
 
 
-def chat_to_worker_id(cursor, code_to_wid):
+def read_results_json(jsonfile):
     '''
-    chat_id: {'0': workder_id, '1': worker_id}
-    workder_id is None means it's a bot
+    Return a dict from mturk_code to worker_id. For Figure8 JSON files.
+    '''
+    d = {}
+
+    json_dict = json.load(open(jsonfile))
+    for worker in json_dict['results']['judgments']:
+        code = None
+        for ques, answer in worker['data'].iteritems():
+            answer = answer.strip()
+            if answer.startswith('MTURK'):
+                code = answer
+
+        if code is None:
+            continue
+
+        d[code] = worker['worker_id']
+
+    return d
+
+
+# update: code_to_wid param became list to account for several batch files
+def chat_to_worker_id(cursor, code_to_wid_list):
+    '''
+    chat_id: {'0': worker_id, '1': worker_id}
+    worker_id is None means it's a bot
     '''
     d = {}
     cursor.execute('SELECT chat_id, agent_ids FROM chat')
@@ -52,26 +75,38 @@ def chat_to_worker_id(cursor, code_to_wid):
                 res = cursor.fetchall()
                 if len(res) > 0:
                     mturk_code = res[0][0]
-                    if mturk_code not in code_to_wid:
-                        continue
-                    else:
-                        agent_wid[agent_id] = code_to_wid[mturk_code]
-                        agent_wid["mturk_code"] = mturk_code
+                    for code_to_wid in code_to_wid_list:
+                        if mturk_code not in code_to_wid:
+                            continue
+                        else:
+                            agent_wid[agent_id] = code_to_wid[mturk_code]
+                            agent_wid["mturk_code"] = mturk_code
         d[chat_id] = agent_wid
     return d
 
 
 # @eahn1: modified to have unique outfile json files (prevent rewrite existing)
+# batch_results has type=list
 def log_worker_id_to_json(db_path, batch_results):
     '''
     {chat_id: {'0': worker_id; '1': worker_id}}
     '''
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    code_to_wid = read_results_csv(batch_results)
-    worker_ids = chat_to_worker_id(cursor, code_to_wid)
-    output_dir = os.path.dirname(batch_results)
-    outfile_name = os.path.splitext(os.path.basename(batch_results))[0] + '_worker_ids.json'
+    code_to_wid_list = []
+    for batch_result in batch_results:
+        if batch_result.endswith('csv'):
+            code_to_wid = read_results_csv(batch_result)
+        else:  # fig8 JSON
+            code_to_wid = read_results_json(batch_result)
+
+        code_to_wid_list.append(code_to_wid)
+
+    worker_ids = chat_to_worker_id(cursor, code_to_wid_list)
+
+    output_dir = os.path.dirname(batch_results[0])
+    # outfile_name = os.path.splitext(os.path.basename(batch_results[0]))[0] + '_worker_ids.json'
+    outfile_name = 'worker_ids.json'
     outfile_path = os.path.join(output_dir, outfile_name)
     write_json(worker_ids, outfile_path)
 
@@ -110,7 +145,7 @@ if __name__ == "__main__":
     parser.add_argument('--output', type=str, required=True, help='File to write JSON examples to.')
     parser.add_argument('--uid', type=str, nargs='*', help='Only print chats from these uids')
     parser.add_argument('--surveys', type=str, help='If provided, writes a file containing results from user surveys.')
-    parser.add_argument('--batch-results', type=str, help='If provided, write a mapping from chat_id to worker_id')
+    parser.add_argument('--batch-results', type=str, nargs='*', help='If provided, write a mapping from chat_id to worker_id for several files')
     args = parser.parse_args()
 
     schema = Schema(args.schema_path)

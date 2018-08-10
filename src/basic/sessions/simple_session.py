@@ -6,7 +6,7 @@ from src.basic.sample_utils import sample_candidates
 from session import Session
 from src.model.preprocess import tokenize, word_to_num
 from src.model.vocab import is_entity
-from src.basic.lexicon import Lexicon
+# from src.basic.lexicon import Lexicon
 import numpy as np
 from itertools import izip
 from google.cloud import translate
@@ -18,6 +18,7 @@ import csv
 translate_client = translate.Client()
 
 num_to_word = {v: k for k, v in word_to_num.iteritems()}
+
 
 class SimpleSession(Session):
     '''
@@ -64,7 +65,7 @@ class SimpleSession(Session):
         self.is_answer = False
         self.ask_question = False
         self.neg_response = False
-        self.is_social = False  #True
+        self.is_social = False
 
         # STYLE
         if style.endswith('_soc'):
@@ -115,27 +116,39 @@ class SimpleSession(Session):
         return dict([('en', content_en), ('sp', content_sp)])
 
     # 2)
-    ''' returns:    phrase_table['en'][eng_word] = list({spa_word: attrib})
+    ''' NEW returns:
+            phrase_table[spa_word] = eng_word
+
+        OLD returns:    phrase_table['en'][eng_word] = list({spa_word: attrib})
                     phrase_table['sp'][spa_word]['eng'] = eng_word
                     phrase_table['sp'][spa_word]['attrib'] = attrib
     '''
     def get_phrase_table(self):
         # assume each line in file has fields: EN, SP, number, gender, formal, tense
-        content_en = defaultdict(list)
+        # content_en = defaultdict(list)
         content_sp = defaultdict(dict)
 
-        with open('data/fillers.txt', 'r') as fin:
-            for line in fin.readlines():
-                eng, spa, num, gender, formal, tense = line.replace('\n', '').decode('utf-8').split('\t')
-                attrib = ','.join([num, gender, formal])
-                span_attrib = defaultdict(dict)
-                span_attrib[spa]['attrib'] = attrib
-                content_en[eng].append(span_attrib)
+        # with open('data/fillers.txt', 'r') as fin:
+        #     for line in fin.readlines():
+        #         import pdb; pdb.set_trace()
+        #         eng, spa, num, gender, formal, tense = line.replace('\n', '').decode('utf-8').split('\t')
+        #         attrib = ','.join([num, gender, formal])
+        #         span_attrib = defaultdict(dict)
+        #         span_attrib[spa]['attrib'] = attrib
+        #         content_en[eng].append(span_attrib)
 
-                content_sp[spa]['eng'] = eng
-                content_sp[spa]['attrib'] = attrib
+        #         content_sp[spa]['eng'] = eng
+        #         content_sp[spa]['attrib'] = attrib
 
-        return dict([('en', content_en), ('sp', content_sp)])
+        reader = csv.DictReader(open('data/fillers.txt', 'r'), delimiter='\t')
+        for row in reader:
+            # for word_group in reader.fieldnames:  # iterate thru keys (header)
+            spa = row['SP']
+            eng = row['EN']
+            content_sp[spa] = eng
+
+        # return dict([('en', content_en), ('sp', content_sp)])
+        return content_sp
 
     # 3)
     def read_discourse_tsv(self):
@@ -280,10 +293,9 @@ class SimpleSession(Session):
 
             return new_str
 
-        # STYLE 3: begin in ENG, switch to SPA
+        # STYLE 3: begin in ENG, switch to SPA [or vice versa]
         # if only 1 clause, switch after mention of "friend/s"
         # if 2+ clauses, make 2nd+ clause SPA
-        #TODO: remove param style_type ??
         def structure_style(style_type):
             orig_spa = translate_to_sp_correctly()
 
@@ -337,6 +349,65 @@ class SimpleSession(Session):
             final = ''.join(final)
             return final
 
+        # STYLE 0: baseline, random switching of units
+        def random_style():
+            new_spa = translate_to_sp_correctly()
+            # new_spa = u'¿Tienes algún amigo que haya estudiado matemáticas ?'
+            # new_spa = u'0 tengo 1 tengo 2 tengo 3 tengo 4'
+            # new_spa = u'No tengo amigo a quien le guste el ganchillo y estudió teatro'
+            new_spa = new_spa.lower()
+            for spa_phrase in sorted(self.phrase_table, key=len, reverse=True):
+                eng_phrase = self.phrase_table[spa_phrase]
+            # for spa_phrase, eng_phrase in self.phrase_table.iteritems():
+                spa_phrase = spa_phrase.decode('utf-8')
+                sp_regex = re.compile(r'\b' + spa_phrase + r'\b', re.UNICODE)
+
+                # print spa_phrase
+
+                # if bool(re.search(sp_regex, new_spa)):  # , re.UNICODE
+                num_occur = len(sp_regex.findall(new_spa))
+                if num_occur == 0:
+                    continue
+
+                print 'PHRASE:', spa_phrase
+                if num_occur == 1:
+
+                    if np.random.random() < 0.5:  # flip half the time
+                        new_spa = re.sub(sp_regex, eng_phrase, new_spa)
+                    else:
+                        new_spa = re.sub(sp_regex, spa_phrase.upper(), new_spa)
+
+                elif num_occur > 1:
+                    # import pdb; pdb.set_trace()
+                    chunks = sp_regex.split(new_spa)
+                    new_spa = chunks[0]  # add 1st chunk
+                    for i in range(len(chunks) - 1):
+                        # eng_or_spa = spa_phrase
+                        if np.random.random() < 0.5:
+                            eng_or_spa = eng_phrase
+                        else:
+                            eng_or_spa = spa_phrase.upper()
+
+                        new_spa += eng_or_spa + chunks[i + 1]
+                    # new_spa += chunks[-1]  # add final chunk
+
+                print 'NEW:', new_spa
+
+            for sp_chunk, en_chunk in self.biling_dct['sp'].iteritems():
+                sp_regex = re.compile(r'\b' + sp_chunk + r'\b')
+
+                if bool(re.search(sp_regex, new_spa)):
+                    print 'PHRASE:', sp_chunk
+                    if np.random.random() < 0.5:
+                        new_spa = new_spa.replace(sp_chunk, en_chunk)
+                        print 'NEW:', new_spa
+
+                # handle items in table (use self.biling_dct)
+            # import pdb; pdb.set_trace()
+            new_spa = new_spa.lower()
+            print 'FINAL:', new_spa
+            return new_spa
+
         # READ FROM SCENARIO
         style_type = self.style
 
@@ -345,14 +416,16 @@ class SimpleSession(Session):
         # style_type = 'sp_lex'
         # style_type = 'en2sp'
         # style_type = 'sp2en'
+        # style_type = 'random'
 
         if style_type == 'en_lex':
             new_str = en_lex()
         elif style_type == 'sp_lex':
             new_str = sp_lex()
         elif '2' in style_type:
-            #TODO: remove style_type param
             new_str = structure_style(style_type)
+        elif style_type == 'random':
+            new_str = random_style()
 
         # SOCIAL STYLE:
         if self.is_social:
@@ -394,7 +467,6 @@ class SimpleSession(Session):
             self.is_answer = False
             self.neg_response = False
 
-        # new_str = new_str.replace(' .','.').replace(' ?','?')
         print '*'*20
         print 'NEW STR', new_str
         print '*'*20
@@ -567,7 +639,7 @@ class SimpleSession(Session):
         message = self.naturalize('i have %s' % fact_str)  # remove period @ sent end
         print '*'*20, 'inform'
         print 'BEFORE', message
-        message = self.stylize(message) # ADDED
+        message = self.stylize(message)  # ADDED
         print 'AFTER', message
         return self.message(message)
 
@@ -578,7 +650,7 @@ class SimpleSession(Session):
         print '*'*20, 'ask'
         print 'BEFORE', message
         self.ask_question = True
-        message = self.stylize(message) # ADDED
+        message = self.stylize(message)  # ADDED
         print 'AFTER', message
         return self.message(message)
 
@@ -648,14 +720,14 @@ class SimpleSession(Session):
             return True
         return False
 
-    def is_question(self, tokens): #TODO: HANDLE RECEIVING
+    def is_question(self, tokens):
         first_word = tokens[0]
         last_word = tokens[-1]
         if last_word == '?' or first_word in ('do', 'does', 'what', 'any'):
             return True
         return False
 
-    def receive(self, event): #TODO: HANDLE RECEIVING
+    def receive(self, event):
         self.sent_entity = False
         if event.action == 'message':
             raw_utterance = event.data

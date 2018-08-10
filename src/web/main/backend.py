@@ -301,7 +301,7 @@ class BackendConnection(object):
         def _choose_scenario_and_partner_type(cursor):
             # for each scenario, get number of complete dialogues per agent type
             non_human_partners = [k for k in self.systems.keys() if k != HumanSystem.name()]
-            print 'NON HUMAN PARTNERS!!', non_human_partners
+            # print 'NON HUMAN PARTNERS!!', non_human_partners
             cursor.execute('''SELECT * FROM scenario''')
             db_scenarios = cursor.fetchall()
             scenario_dialogues = defaultdict(lambda: defaultdict(int))
@@ -320,9 +320,9 @@ class BackendConnection(object):
                         active_scenarios[sid].append(partner_type)
 
             # import pdb; pdb.set_trace()
-            print '*'*20
-            print 'active_scenarios', active_scenarios
-            print 'scenario_dialogues', scenario_dialogues
+            # print '*'*20
+            # print 'active_scenarios', active_scenarios
+            # print 'scenario_dialogues', scenario_dialogues
 
             # if all scenarios have at least one dialogue per agent type (i.e. no active scenarios),
             # just select a random scenario and agent type
