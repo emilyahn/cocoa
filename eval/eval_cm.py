@@ -95,6 +95,7 @@ def auto_lid_tagging(chatdict, outfile):
 	hyp_counts = [0, 0, 0]
 	for chat_id in chatdict:
 		for utt_i, utt in enumerate(chatdict[chat_id]['text']):
+			# tokenized via English spacy
 			doc_en = nlp_en(utt)
 			for word_orig in doc_en:
 				word = word_orig.text
@@ -104,13 +105,12 @@ def auto_lid_tagging(chatdict, outfile):
 				# elif word in content_sp:
 				# 	hypothesis_01 = 0
 
-				# TRY FLIPPING DEFAULT
+				# DEFAULT = SPA
 				if word in content_sp:
 					hypothesis_01 = 0
 				elif word in content_en:
 					hypothesis_01 = 1
 
-				# import pdb; pdb.set_trace()
 				out_list.append(
 					'\t'.join([
 						chatdict[chat_id]['style'], chat_id,

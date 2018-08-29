@@ -10,9 +10,9 @@ chat_db=${out_folder}/${out_name}.db
 scenarios=data/scenarios_0809_random.json
 schema=data/schema_0809_random.json
 
-# batch_file="${out_folder}/amt_0810_58.csv ${out_folder}/fig8_0806_100.json ${out_folder}/fig8_0809_100.json "
-# batch_arg="--batch-results $batch_file"
-batch_arg=""
+batch_file="${out_folder}/amt_0815_27.csv ${out_folder}/fig8_0812_50.json"
+batch_arg="--batch-results $batch_file"
+# batch_arg=""
 
 
 # 1) COPY SQL DB TO LOCAL
