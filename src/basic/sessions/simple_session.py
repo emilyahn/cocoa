@@ -29,7 +29,7 @@ class SimpleSession(Session):
     - selects and item
     '''
 
-    # greetings = ['hi', 'hello', 'hey', 'hiya']
+    greetings_en = ['hi', 'hello', 'hey', 'hiya']
     # TODO: read in as list, in case we change it up more later
     greetings = ['hola', 'que pasa', 'que tal']
 
@@ -43,10 +43,6 @@ class SimpleSession(Session):
         self.consecutive_entity = consecutive_entity
         self.num_items = len(kb.items)
         self.entity_coords = self.get_entity_coords()
-        # print "ENTITY_COORDS", self.entity_coords
-        # print '*'*20
-        # print type(kb.items)
-        # print len(kb.items)
 
         self.entity_weights = self.weight_entity()
         self.item_weights = [1.] * self.num_items
@@ -417,6 +413,8 @@ class SimpleSession(Session):
         # style_type = 'en2sp'
         # style_type = 'sp2en'
         # style_type = 'random'
+        # style_type = 'en_mono'
+        # style_type = 'sp_mono'
 
         if style_type == 'en_lex':
             new_str = en_lex()
@@ -426,6 +424,10 @@ class SimpleSession(Session):
             new_str = structure_style(style_type)
         elif style_type == 'random':
             new_str = random_style()
+        elif style_type == 'en_mono':
+            return orig_eng
+        elif style_type == 'sp_mono':
+            new_str = translate_to_sp_correctly()
 
         # SOCIAL STYLE:
         if self.is_social:
@@ -688,6 +690,8 @@ class SimpleSession(Session):
         if not self.said_hi:
             self.said_hi = True
             text = random.choice(self.greetings)
+            if self.style == 'en_mono':
+                text = random.choice(self.greetings_en)
             return self.message(text)
 
         # Reply to questions

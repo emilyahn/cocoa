@@ -273,6 +273,7 @@ def index():
         if request.args.get('peek') is not None and request.args.get('peek') == '1':
             peek = True
         chat_info = backend.get_chat_info(userid(), peek=peek)
+        style = backend.scenario_db.get(chat_info.scenario_id).style
 
         old_attrib = chat_info.attributes
         biling_attrib = [en2sp_dict[attr.name] for attr in old_attrib]
@@ -312,7 +313,8 @@ def index():
                                icon=app.config['task_icon'],
                                partner_kb=partner_kb,
                                quit_enabled=app.config['user_params']['skip_chat_enabled'],
-                               quit_after=app.config['user_params']['status_params']['chat']['num_seconds'] - app.config['user_params']['quit_after'])
+                               quit_after=app.config['user_params']['status_params']['chat']['num_seconds'] - app.config['user_params']['quit_after'],
+                               style=style)
     elif status == Status.Survey:
         survey_info = backend.get_survey_info(userid())
         return render_template('survey_emily.html',

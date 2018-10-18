@@ -44,19 +44,35 @@ execute `./mturk_process.sh`
 
 ### 20 July
 add social
-`PYTHONPATH=. python src/scripts/generate_scenarios.py --schema-path data/schema_0720_social.json --scenarios-path data/scenarios_0720_social_20.json --num-scenarios 10 --random-attributes --random-items --alphas 0.3 1 3 --min-items 10 --max-items 10 --num-styles 4`
+```sh
+PYTHONPATH=. python src/scripts/generate_scenarios.py --schema-path data/schema_0720_social.json --scenarios-path data/scenarios_0720_social_20.json --num-scenarios 10 --random-attributes --random-items --alphas 0.3 1 3 --min-items 10 --max-items 10 --num-styles 4
+```
 
 ### 27 July
 make social its own explicit style from generate_schema and simple_session
-`python src/scripts/generate_schema.py --schema-path data/schema_0727_all8.json`
-`PYTHONPATH=. python src/scripts/generate_scenarios.py --schema-path data/schema_0727_all8.json --scenarios-path data/scenarios_0727_all8.json --num-scenarios 10 --random-attributes --random-items --alphas 0.3 1 3 --min-items 10 --max-items 10 --num-styles `
+```sh
+python src/scripts/generate_schema.py --schema-path data/schema_0727_all8.json
+
+PYTHONPATH=. python src/scripts/generate_scenarios.py --schema-path data/schema_0727_all8.json --scenarios-path data/scenarios_0727_all8.json --num-scenarios 10 --random-attributes --random-items --alphas 0.3 1 3 --min-items 10 --max-items 10 --num-styles
+```
 
 ### 29 July
 change dump_db_neg.py to process worker ids from SEVERAL files, inclduing type JSON from figure8
-`PYTHONPATH=. python src/web/dump_db_neg.py --db turk/fig8_0_all4/fig8_0_all4.db --output turk/fig8_0_all4/fig8_0_chat.json  --schema-path data/schema_0720_social.json --scenarios-path data/scenarios_0720_social.json --surveys turk/fig8_0_all4/fig8_0_surv.json --batch-results turk/fig8_0_all4/job_0725.json turk/fig8_0_all4/job_0727.json`
+```sh
+PYTHONPATH=. python src/web/dump_db_neg.py --db turk/fig8_0_all4/fig8_0_all4.db --output turk/fig8_0_all4/fig8_0_chat.json  --schema-path data/schema_0720_social.json --scenarios-path data/scenarios_0720_social.json --surveys turk/fig8_0_all4/fig8_0_surv.json --batch-results turk/fig8_0_all4/job_0725.json turk/fig8_0_all4/job_0727.json
+```
 
 update process_survey to handle SEVERAL files, including type JSON. Handles duplicate mturk entries in DB and discards bad chats.
-`python turk/process_survey.py --workers turk/fig8_0_all4/worker_ids.json --chats turk/fig8_0_all4/fig8_0_chat.json --surveys turk/fig8_0_all4/fig8_0_surv.json --crowdfiles turk/fig8_0_all4/job_0725.json turk/fig8_0_all4/job_0727.json --outfile turk/fig8_0_all4/fig8_0_qual.tsv`
+```sh
+python turk/process_survey.py --workers turk/fig8_0_all4/worker_ids.json --chats turk/fig8_0_all4/fig8_0_chat.json --surveys turk/fig8_0_all4/fig8_0_surv.json --crowdfiles turk/fig8_0_all4/job_0725.json turk/fig8_0_all4/job_0727.json --outfile turk/fig8_0_all4/fig8_0_qual.tsv
+```
 
 ### 9 Aug
 make random style
+
+### 24 Sept
+make mono style {en_mono, sp_mono}
+```sh
+PYTHONPATH=. python src/scripts/generate_schema.py --schema-path data/schema_0924_mono.json
+PYTHONPATH=. python src/scripts/generate_scenarios.py --schema-path data/schema_0924_mono.json --scenarios-path data/scenarios_0924_mono.json --num-scenarios 10 --random-attributes --random-items --alphas 0.3 1 3 --min-items 10 --max-items 10 --num-styles 2
+```

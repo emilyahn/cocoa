@@ -287,12 +287,22 @@
 
 	<body onload='init()' oncopy="return false" oncut="return false" onpaste="return false">
 	  <div class="clearfix">
-	  	<h1 style="color:#004d00" class="py-2 px-2">{{ title_span }}</h1>
+	  	<h1 style="color:#004d00" class="py-2 px-2">
+		  	{% if style == "en_mono" %}
+				{{ title }}
+			{% else %}
+				{{ title_span }}
+			{% endif %}
+	  	</h1>
 	  	<div class="row">
 	  		<div class="col">
 	<div id="container" class="py-2 px-2">
 	<div id="instructions">
-		{{ instructions_span }}
+		{% if style == "en_mono" %}
+			{{ instructions }}
+		{% else %}
+			{{ instructions_span }}
+		{% endif %}
 	</div>
 
 		<div id="clockdiv" align="right">

@@ -29,6 +29,8 @@ def time_to_num(time_string):
 		month_str = '07'
 	elif month == 'Aug':
 		month_str = '08'
+	elif month == 'Sep':
+		month_str = '09'
 
 	return '{}-{}'.format(month_str, new_str[4:])
 

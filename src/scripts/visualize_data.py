@@ -41,9 +41,9 @@ def render_chat(chat, agent=None, partner_type='human'):
     if len(events) == 0:
         return False, None
 
-    chat_html= ['<div class=\"chatLog\">',
-            '<div class=\"divTitle\"> Chat Log </div>',
-            '<table class=\"chat\">']
+    chat_html = ['<div class=\"chatLog\">',
+                '<div class=\"divTitle\"> Chat Log </div>',
+                '<table class=\"chat\">']
     agent_str = {0: '', 1: ''}
 
     # Used for visualizing chat during debugging
@@ -79,46 +79,6 @@ def render_chat(chat, agent=None, partner_type='human'):
     completed = False if chat["outcome"] is None or chat["outcome"]["reward"] == 0 else True
     return completed, chat_html
 
-    #if agent == 0:
-    #    chat_html.append("<b>Agent 0 (You)</b></td><td width=\"50%%\"><b>Agent 1 (Partner: %s)</b></td></tr><tr><td width=\"50%%\">" % partner_type)
-    #elif agent == 1:
-    #    chat_html.append("<b>Agent 0 (Partner: %s)</b></td><td width=\"50%%\"><b>Agent 1 (You)</b></td></tr><tr><td width=\"50%%\">" % partner_type)
-    #elif 'agents' in chat:
-    #    chat_html.append("<b>Agent 0 (%s) </b></td><td width=\"50%%\"><b>Agent 1 (%s) </b></td></tr><tr><td width=\"50%%\">" % (chat['agents']['0'], chat['agents']['1']))
-    #else:
-    #    chat_html.append("<b>Agent 0 </b></td><td width=\"50%%\"><b>Agent 1 </b></td></tr><tr><td width=\"50%%\">")
-
-    #current_user = 0
-
-    #for event in events:
-    #    if event.agent != current_user:
-    #        chat_html.append('</td>')
-    #        if current_user == 1:
-    #            chat_html.append('</tr><tr>')
-    #        chat_html.append('<td width=\"50%%\">')
-    #    else:
-    #        chat_html.append('<br>')
-
-    #    current_user = event.agent
-    #    if event.action == 'message':
-    #        chat_html.append(event.data)
-    #    elif event.action == 'select':
-    #        chat_html.append("Selected " + ", ".join(event.data.values()))
-
-    #if current_user == 0:
-    #    chat_html.append('</td><td width=\"50%%\">LEFT</td></tr>')
-
-    #chat_html.append('</table>')
-    #chat_html.append('<br>')
-    #completed = False if chat["outcome"] is None or chat["outcome"]["reward"] == 0 else True
-    #if completed:
-    #    chat_html.insert(0, '<div style=\"color:#0000FF\">')
-    #else:
-    #    chat_html.insert(0, '<div style=\"color:#FF0000\">')
-    #chat_html.append('</div>')
-    #chat_html.append('</div>')
-
-    #return completed, chat_html
 
 def _render_response(response, agent_id, agent):
     html = []
@@ -128,40 +88,14 @@ def _render_response(response, agent_id, agent):
     # html.append('<tr>%s</tr>' % (''.join(['<th>%s</th>' % x for x in ('Question', 'Mean', 'Response', 'Justification')])))
     html.append('<tr>%s</tr>' % (''.join(['<th>%s</th>' % x for x in ('Question', 'Response')])))
     for question in QUESTIONS:
-        if question not in response: #or question == 'comments' or question.endswith('text'):
+        if question not in response:  # or question == 'comments' or question.endswith('text'):
             continue
-        # else:
-        #     scores = response[question]
-        #     if question+'_text' in response:
-        #         just = response[question+'_text']
-        #         assert len(scores) == len(just)
-        #     else:
-        #         just = None
 
         answer = response[question]
         # print type(answer)
         if type(answer) == unicode:
             answer = answer.encode('utf-8')
         html.append('<tr><td>{}</td><td>{}</td></tr>'.format(question, answer))
-
-
-    #     if just is not None:
-    #         n = len(scores)
-    #         for i, (s, j) in enumerate(izip(scores, just)):
-    #             html.append('<tr>')
-    #             if i == 0:
-    #                 html.append('<td rowspan=\"%d\">%s</td>' % (n, question))
-    #                 html.append('<td rowspan=\"%d\">%s</td>' % (n, np.mean(scores)))
-    #             html.append('<td>%d</td><td>%s</td>' % (s, j))
-    #             html.append('</tr>')
-    #     else:
-    #         # import pdb; pdb.set_trace()
-    #         html.append('<tr>%s</tr>' % (''.join(['<td>%s</td>' % x for x in (question, np.mean(scores), ' / '.join([str(x) for x in scores]))])))
-
-    # if 'comments' in response:
-    #     comment_str = response['comments'][0]
-    #     if len(comment_str) > 0:
-    #         html.append('<tr><td>%s</td><td colspan=3>%s</td></tr>' % ('comments', comment_str))
 
     html.append('</table>')
     return html
@@ -340,7 +274,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     add_scenario_arguments(parser)
     add_visualization_arguments(parser)
-    parser.add_argument('--transcripts', type=str, default='transcripts.json', help='Path to json file containing transcripts')
+    parser.add_argument('--transcripts', type=str, default='transcripts.json', help='Path to json file containing chats')
     parser.add_argument('--survey_file', type=str, default=None, help='Path to json file containing survey')
 
     args = parser.parse_args()

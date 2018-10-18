@@ -3,6 +3,7 @@ from collections import defaultdict
 import unidecode
 import spacy
 from argparse import ArgumentParser
+import os
 
 
 """ Script to process cocoa chat in JSON
@@ -25,31 +26,35 @@ def scrape_chat_json(chat_filename):
 	for full_chat in chat_info:
 		this_chatid = full_chat["uuid"]
 		this_style = full_chat["scenario"]["styles"]
-		out_list = []
+		out_lists = defaultdict(list)
 
-		idx = 0
+		user_idx = 0
+		bot_idx = 1
 		if full_chat['agents']['0'] == 'rule_bot':
-			idx = 1
+			user_idx = 1
+			bot_idx = 0
 
 		for event in full_chat['events']:
 			if not event['action'] == 'message':
 				continue  # e.g. action == 'select'
 
 			agent = event['agent']
-			if agent == idx:
-				msg = event['data']
-				# strip all accents from text, lowercase
-				msg = msg.lower()
-				msg = unidecode.unidecode(msg)
-				out_list.append(unicode(msg))
+			# if agent == idx:
+
+			msg = event['data']
+			# strip all accents from text, lowercase
+			msg = msg.lower()
+			msg = unidecode.unidecode(msg)
+			out_lists[agent].append(unicode(msg))
 
 		full_dict[this_chatid]['style'] = this_style
-		full_dict[this_chatid]['text'] = out_list
+		full_dict[this_chatid]['text_bot'] = out_lists[bot_idx]
+		full_dict[this_chatid]['text_user'] = out_lists[user_idx]
 
 	return full_dict
 
 
-def auto_lid_tagging(chatdict, outfile):
+def auto_lid_tagging(chatdict, outfile, is_bot=False):
 	content_en = set()
 	content_sp = set()
 	with open('cocoa/data/en_dict.txt', 'r') as fin:
@@ -94,7 +99,12 @@ def auto_lid_tagging(chatdict, outfile):
 	out_list = []
 	hyp_counts = [0, 0, 0]
 	for chat_id in chatdict:
-		for utt_i, utt in enumerate(chatdict[chat_id]['text']):
+		# choose to get LID for either user or bot
+		text_key = 'text_user'
+		if is_bot:
+			text_key = 'text_bot'
+
+		for utt_i, utt in enumerate(chatdict[chat_id][text_key]):
 			# tokenized via English spacy
 			doc_en = nlp_en(utt)
 			for word_orig in doc_en:
@@ -121,7 +131,11 @@ def auto_lid_tagging(chatdict, outfile):
 
 	print hyp_counts
 
-	with open(outfile, 'w') as w:
+	writefile_flag = 'w'
+	if os.path.isfile(outfile):  # if file exists, append to it
+		writefile_flag = 'a'
+
+	with open(outfile, writefile_flag) as w:
 		for line in out_list:
 			w.write(line + '\n')
 
@@ -134,12 +148,15 @@ def main():
 	parser.add_argument(
 		'--lid_outfile', type=str, default=None,
 		help='Outfile path. TSV of tokens w/ auto-generated LID tags')
+	parser.add_argument(
+		'--get_bot', action='store_true', default=False,
+		help='When flagged, output LID files for bot only (not user).')
 	args = parser.parse_args()
 
 	# import pdb; pdb.set_trace()
 	chat_dict = scrape_chat_json(args.chat_file)
 	if args.lid_outfile is not None:
-		auto_lid_tagging(chat_dict, args.lid_outfile)
+		auto_lid_tagging(chat_dict, args.lid_outfile, args.get_bot)
 
 	# for chat_id in chat_dict:
 	# 	print '{}\t{}'.format(chat_id, chat_dict[chat_id]['style'])

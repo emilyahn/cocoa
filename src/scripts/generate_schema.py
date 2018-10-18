@@ -61,7 +61,8 @@ if __name__ == '__main__':
     # styles = ['en2sp', 'sp2en']
     # styles = ['en2sp', 'sp2en', 'en_lex', 'sp_lex']
     # styles = ['en2sp', 'sp2en', 'en_lex', 'sp_lex', 'en2sp_soc', 'sp2en_soc', 'en_lex_soc', 'sp_lex_soc']
-    styles = ['random']
+    # styles = ['random']
+    styles = ['en_mono', 'sp_mono']
     print '%d styles' % len(styles)
 
     # Schema

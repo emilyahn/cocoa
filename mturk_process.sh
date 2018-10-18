@@ -1,16 +1,16 @@
 # script to process mturk results
 
 # 0) check params
-out_name=0810_rand #_nobatch
+out_name=0924_mono #_nobatch
 out_folder=turk/${out_name}
 # time_stamp=2018-07-28-20-54-19
-time_stamp=2018-08-10-19-55-47
+time_stamp=2018-09-25-01-20-13
 chat_db=${out_folder}/${out_name}.db
 # chat_db=turk/struct_0629.db
-scenarios=data/scenarios_0809_random.json
-schema=data/schema_0809_random.json
+scenarios=data/scenarios_0924_mono.json
+schema=data/schema_0924_mono.json
 
-batch_file="${out_folder}/amt_0815_27.csv ${out_folder}/fig8_0812_50.json"
+batch_file="${out_folder}/fig8_0926_95.json  ${out_folder}/amt_0926_22.csv"  #${out_folder}/amt_0815_27.csv
 batch_arg="--batch-results $batch_file"
 # batch_arg=""
 
